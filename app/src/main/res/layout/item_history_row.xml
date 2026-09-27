@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One completion row on the Daily History screen (Phase 6.3).
+
+  Three lines, in decreasing importance:
+
+    #1  R-01 — 123456     the position in the day and the store's identifiers
+    Alfamart Sampaloc     the name, which is what a person actually recognises
+    Sampaloc, Manila · 10:12 AM
+
+  The sequence leads because it is the point of this screen: the screen plan asks for the real order of
+  completion, and the number is what makes that order visible rather than implied.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.AlphaRoute.StatCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_row_identifiers"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+            tools:text="#1  R-01 — 123456" />
+
+        <TextView
+            android:id="@+id/tv_row_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            tools:text="Alfamart Sampaloc" />
+
+        <TextView
+            android:id="@+id/tv_row_area_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            tools:text="Sampaloc, Manila · 10:12 AM" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

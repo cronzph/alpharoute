@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Completion confirmation (Phase 5.2/5.3). Screen 9 of the Phase 0.3 screen plan.
+
+  The single gate that turns a visit into a completion. Nothing in this app is counted without an explicit
+  YES on this dialog - not an arrival, not a notification, not a timer.
+
+  This is the CONTENT view only. The dialog frame, the title and the two buttons come from
+  MaterialAlertDialogBuilder in CompletionConfirmDialogFragment, so the buttons sit where a Material dialog
+  puts them and the dialog survives a rotation the way the platform expects. The fragment reaches the
+  buttons through dialog.getButton(), which is why they are not declared here.
+
+  The store block repeats what the user is about to confirm. A confirmation that does not say what it is
+  about to record is not really a confirmation - and this one writes a permanent history row.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="24dp"
+    android:paddingTop="8dp"
+    android:paddingEnd="24dp"
+    android:paddingBottom="4dp">
+
+    <TextView
+        android:id="@+id/tv_completion_store"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+        tools:text="R-01 — 123456" />
+
+    <TextView
+        android:id="@+id/tv_completion_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+        tools:text="Alfamart Sampaloc" />
+
+    <TextView
+        android:id="@+id/tv_completion_area"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+        tools:text="Sampaloc, Manila" />
+
+    <!--
+      The distance at which arrival was detected. Shown because it is the evidence for the question: the
+      user can see that the app believed they were 42 m away, and disagree with it if it was wrong. A
+      dialog that only says "you arrived" gives them nothing to check against.
+    -->
+    <TextView
+        android:id="@+id/tv_completion_distance"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+        tools:text="Arrival detected at 42 m" />
+
+    <!--
+      Shown only while the transaction runs. The buttons are disabled at the same moment - this is the
+      first of the three duplicate-completion guards, and the only one the user sees. The other two are
+      the re-read inside the transaction and the UNIQUE index on storeId, which catch what a disabled
+      button cannot: a rotation mid-write, or two devices.
+    -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/completion_progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:indeterminate="true"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+</LinearLayout>

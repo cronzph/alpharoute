@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AlphaRoute dark colour scheme.
+
+  These override the light values in values/colors.xml whenever the device is in dark mode.
+  The theme itself is defined ONCE in values/themes.xml and simply references these names, so
+  there is no duplicate style definition to drift out of sync.
+-->
+<resources>
+
+    <!-- Material 3 colour roles - dark -->
+    <color name="md_primary">#A9C7FF</color>
+    <color name="md_on_primary">#002F65</color>
+    <color name="md_primary_container">#00458F</color>
+    <color name="md_on_primary_container">#D6E3FF</color>
+    <color name="md_secondary">#BEC6DC</color>
+    <color name="md_on_secondary">#283041</color>
+    <color name="md_secondary_container">#3E4759</color>
+    <color name="md_on_secondary_container">#DAE2F9</color>
+    <color name="md_surface">#1A1B1F</color>
+    <color name="md_on_surface">#E3E2E6</color>
+    <color name="md_surface_variant">#44474F</color>
+    <color name="md_on_surface_variant">#C4C6D0</color>
+    <color name="md_outline">#8E9099</color>
+    <color name="md_error">#FFB4AB</color>
+    <color name="md_on_error">#690005</color>
+
+    <!-- Material 3 surface container roles: used by cards, bottom sheets and the navigation bar -->
+    <color name="md_surface_container_lowest">#0F1013</color>
+    <color name="md_surface_container_low">#1A1B1F</color>
+    <color name="md_surface_container">#1E1F23</color>
+    <color name="md_surface_container_high">#292A2E</color>
+    <color name="md_surface_container_highest">#343539</color>
+
+    <!--
+      ==========================================================================
+      GLASSMORPHISM - dark
+      ==========================================================================
+
+      Same names as the light block in values/colors.xml, different values. Nothing in a layout or in
+      Java knows which mode is active.
+
+      The alpha values here are LOWER than their light counterparts, and that is deliberate. A white
+      fill at 72% over a dark gradient would be a pale grey slab; dark glass is a light tint over a dark
+      background, so the fills sit around 8-14% and the strokes around 12-16%.
+    -->
+
+    <!--
+      The window gradient: near-black with a hint of blue and violet.
+      Deepened from the first pass - a dark backdrop still has to have enough variation for a translucent
+      pane to be visibly translucent against it.
+    -->
+    <color name="glass_gradient_start">#0A0C12</color>
+    <color name="glass_gradient_mid">#161733</color>
+    <color name="glass_gradient_end">#080F13</color>
+
+    <!-- The colour blobs. Brighter than the light-mode pair, because they are the only colour on screen -->
+    <color name="glass_blob_primary">#592E7CF6</color>
+    <color name="glass_blob_secondary">#4DB06BE8</color>
+
+    <!-- Zero-alpha versions of the same hues - see the note in values/colors.xml on why not transparent black -->
+    <color name="glass_blob_primary_end">#002E7CF6</color>
+    <color name="glass_blob_secondary_end">#00B06BE8</color>
+
+    <!-- A card's fill: white at 9%. Enough to separate the pane from the background, not enough to grey it -->
+    <color name="glass_fill">#17FFFFFF</color>
+
+    <!-- A slightly stronger fill, for cards that must stand out -->
+    <color name="glass_fill_strong">#26FFFFFF</color>
+
+    <!-- A tinted fill. The dark blue is carried in the colour, not in the alpha -->
+    <color name="glass_fill_accent">#2E3B5BA8</color>
+
+    <!-- The 1dp hairline: white at 14%, which is the classic glass rim on a dark background -->
+    <color name="glass_stroke">#24FFFFFF</color>
+
+    <!-- The toolbar, the bottom bar and the sheets: 97% opaque - see the note in values/colors.xml -->
+    <color name="glass_chrome">#F70E1016</color>
+
+
+    <!-- The hero card's rim. Brighter than the light version, because it is the only accent on a dark screen -->
+    <color name="glass_stroke_accent">#A62E7CF6</color>
+
+    <color name="glass_scrim">#66000000</color>
+
+    <!--
+      Store status chip - dark. Same names as the light pair in values/colors.xml, so the layout and the
+      code never have to know which mode is active. The container goes dark and the text goes light;
+      reusing the light pair here would glare against a dark surface.
+    -->
+    <color name="status_pending_container">#4E2A00</color>
+    <color name="status_on_pending_container">#FFB74D</color>
+    <color name="status_completed_container">#1B3D1E</color>
+    <color name="status_on_completed_container">#81C784</color>
+
+</resources>

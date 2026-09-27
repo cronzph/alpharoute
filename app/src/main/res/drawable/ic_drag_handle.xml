@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The grip on a route stop (Version 18): press and hold here to move the stop up or down the route.
+
+  Two lines rather than three, and no border, so it reads as a grip rather than as a menu button - the
+  Material drag-handle shape, which is what a person already knows means "this row can be moved".
+
+  Tinted by the row that uses it, like ic_add_link.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M20,9H4v2h16V9zM4,13h16v2H4V13z" />
+</vector>

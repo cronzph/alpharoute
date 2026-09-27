@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Current location: a blue dot inside a white ring.
+
+  Blue is the conventional colour for "you are here", and it is the fourth distinct marker shape in this
+  app - a plain circle, against the teardrops used for pending and completed stores and the house used
+  for Home. Colour is never the only signal (Phase 0.3 s13.15).
+
+  The white ring is what makes the dot readable over both light and dark map tiles.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M5,12a7,7 0 1,0 14,0a7,7 0 1,0 -14,0" />
+    <path
+        android:fillColor="@color/marker_current"
+        android:pathData="M7,12a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" />
+</vector>

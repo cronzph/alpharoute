@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Home Setup (Phase 3.7). Screen 6 of the Phase 0.3 screen plan.
+
+  A pushed fragment, not a tab: it is reached from Settings and it configures one setting, so it has a
+  Back action and the bottom navigation is hidden while it is open.
+
+  HOW A POINT IS CHOSEN. Tapping the map places - or moves - the Home pin. That is the whole gesture; the
+  map is always ready for it. The screen plan lists a separate "Select on map" button beside "Use current
+  location", but there is no third way to choose a point here: the map is embedded and a tap IS the
+  selection, so that button would have had nothing to do. The instruction line below says what to do
+  instead. Adding the button back is trivial if it is ever wanted.
+
+  The OpenStreetMap attribution is not optional - the tile usage policy requires it to be visible
+  wherever the tiles are drawn, so it sits over the bottom-right of the map exactly as it does on the Map
+  tab, and must never be hidden behind anything.
+-->
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <!-- Visible only while the first GPS fix is being acquired. -->
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/home_setup_loading"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_home_setup_caption"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/home_setup_caption"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/home_setup_loading" />
+
+    <org.osmdroid.views.MapView
+        android:id="@+id/map_home_setup"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@id/tv_home_setup_coordinates"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_home_setup_caption" />
+
+    <!-- Required by the OpenStreetMap tile usage policy. Never hide this. -->
+    <TextView
+        android:id="@+id/tv_home_setup_attribution"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="22dp"
+        android:layout_marginBottom="6dp"
+        android:background="@color/map_attribution_scrim"
+        android:paddingStart="6dp"
+        android:paddingTop="2dp"
+        android:paddingEnd="6dp"
+        android:paddingBottom="2dp"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+        android:textColor="@color/map_attribution_text"
+        app:layout_constraintBottom_toBottomOf="@id/map_home_setup"
+        app:layout_constraintEnd_toEndOf="@id/map_home_setup"
+        tools:text="© OpenStreetMap contributors" />
+
+    <!-- "Locating…", "No point chosen yet", or the chosen coordinates. -->
+    <TextView
+        android:id="@+id/tv_home_setup_coordinates"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+        app:layout_constraintBottom_toTopOf="@id/tv_home_setup_instruction"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/map_home_setup"
+        tools:text="14.599500, 120.984200" />
+
+    <TextView
+        android:id="@+id/tv_home_setup_instruction"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/home_setup_instruction"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+        app:layout_constraintBottom_toTopOf="@id/group_home_setup_actions"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_home_setup_coordinates" />
+
+    <LinearLayout
+        android:id="@+id/group_home_setup_actions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!--
+          The primary action, full width and above the others: it is the only thing on this screen that
+          changes anything, and it stays disabled until a point has actually been chosen.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_home_setup_confirm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:text="@string/home_setup_action_confirm" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_home_setup_back"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_setup_action_back" />
+
+            <!--
+              Its label changes with the location permission: "Use current location" once it is granted,
+              "Grant permission" while it is not. A disabled button with no explanation would leave the
+              user with no idea what to do.
+            -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_home_setup_use_location"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/home_setup_action_use_location" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A bottom sheet's background (Version 16): OPAQUE, rounded at the top only.
+
+  This replaced bg_glass_sheet.xml. A sheet is a POPUP, and a popup is a surface you READ - anything
+  showing through it competes with the text the user is being asked to read and act on.
+
+  Rounded at the top only because the bottom edge is off-screen; rounding it would leave two slivers of
+  the screen visible through the gap, which reads as a rendering fault.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/md_surface_container_high" />
+    <corners
+        android:topLeftRadius="28dp"
+        android:topRightRadius="28dp" />
+</shape>

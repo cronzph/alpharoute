@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The optimised route (Phase 8.4). A pushed screen, reached from the Dashboard.
+
+  A header with the totals, the ordered list of stops, and two actions. Nothing else - this screen answers
+  one question ("in what order should I go") and every extra control would dilute it.
+
+  Since Version 18 the header also carries the saved plan: the order on screen can be rearranged by hand
+  and saved under a name, so the answer to that question can be the user's rather than the app's.
+
+  The list is scrollable and the actions are pinned below it, so Start Route is reachable without scrolling
+  past twenty stops.
+
+  The order is worked out on the device, so this screen has no loading state worth designing for and no
+  offline state at all - it always has a route to show.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    tools:context=".ui.route.OptimizedRouteFragment">
+
+    <!-- The header: what the plan is, and what it costs. -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
+
+        <TextView
+            android:id="@+id/tv_route_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle"
+            tools:text="12 stops · 34.2 km · about 1 h 15 min" />
+
+        <!--
+          Says where the route starts and finishes. The user gave the app a Home and a position, and a route
+          that silently ignored either would be a surprise.
+        -->
+        <TextView
+            android:id="@+id/tv_route_endpoints"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            tools:text="From your location, finishing at Home" />
+
+        <!-- Shown only when the solver could not place every store. -->
+        <TextView
+            android:id="@+id/tv_route_unassigned"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            android:textColor="?attr/colorError"
+            android:visibility="gone"
+            tools:text="2 stores could not be included."
+            tools:visibility="visible" />
+
+        <!--
+          Shown when the distances are straight lines rather than roads - which is every route planned on
+          the device. A total that implies a road measurement the app never took would be overstating what
+          it knows, and the real drive is always longer than the number above it.
+        -->
+        <TextView
+            android:id="@+id/tv_route_estimate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/route_estimate_note"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!--
+          The saved plan (Version 18). The button names the plan the order belongs to and opens the list;
+          Save is separate from it because choosing a plan and committing an order are different decisions,
+          and merging them into one control is how a user saves over the wrong plan.
+
+          Save is disabled until something has actually changed. A Save button that is always live invites
+          the tap that does nothing, and gives no signal that the arrangement on screen is already stored.
+        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_route_plan"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/route_plan_none"
+                app:icon="@drawable/ic_arrow_drop_down"
+                app:iconGravity="textEnd"
+                tools:text="Plan 1 (unsaved)" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_route_save"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:enabled="false"
+                android:text="@string/route_plan_save" />
+
+        </LinearLayout>
+
+        <!-- The one instruction this screen needs, and only while the order can actually be changed. -->
+        <TextView
+            android:id="@+id/tv_route_reorder_hint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/route_plan_reorder_hint"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/route_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/route_stops"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="8dp"
+            tools:listitem="@layout/item_route_stop" />
+
+        <TextView
+            android:id="@+id/tv_route_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="32dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            android:visibility="gone"
+            tools:text="Could not reach the routing service."
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
+    <!--
+      The actions. Start Route is the primary; Recalculate is secondary and costs nothing - it re-runs a
+      calculation on the device - so it is there for when the position or the store list has moved.
+    -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_route_recalculate"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/route_action_recalculate" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_route_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="@string/route_action_start" />
+
+    </LinearLayout>
+
+</LinearLayout>

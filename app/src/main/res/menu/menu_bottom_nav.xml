@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The four top-level destinations.
+
+  Order matters: the first item is the tab selected on a cold start (see MainActivity), and the
+  BottomNavigationView restores the user's choice across rotation and process death on its own.
+
+  Icons are single-colour vectors; BottomNavigationView tints them for the selected/unselected states,
+  so the drawables must NOT carry their own colour.
+-->
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/nav_dashboard"
+        android:icon="@drawable/ic_nav_dashboard"
+        android:title="@string/title_dashboard" />
+
+    <item
+        android:id="@+id/nav_map"
+        android:icon="@drawable/ic_nav_map"
+        android:title="@string/title_map" />
+
+    <item
+        android:id="@+id/nav_history"
+        android:icon="@drawable/ic_nav_history"
+        android:title="@string/title_history" />
+
+    <item
+        android:id="@+id/nav_settings"
+        android:icon="@drawable/ic_nav_settings"
+        android:title="@string/title_settings" />
+
+</menu>

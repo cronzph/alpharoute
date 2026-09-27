@@ -1,0 +1,141 @@
+rules_version = '2';
+
+// ===============================================================================================
+// AlphaRoute - Firestore security rules
+//
+// Version 14 wrote this file. Version 19 corrected what it says, not what it does - see below.
+//
+// PASTE THIS INTO: Firebase Console -> Firestore Database -> Rules -> Publish
+// or, with the Firebase CLI:  firebase deploy --only firestore:rules
+//   (the CLI looks for a file called `firestore.rules` in the project root, which is why this one
+//    has that name)
+//
+// -----------------------------------------------------------------------------------------------
+// WHAT CHANGED IN VERSION 19, AND WHY IT MATTERS
+//
+// The rules below were already correct - Version 14 got the security right and nothing about them
+// needs to change to make cloud sync work. But the comments described a data shape that was never
+// built: one document per store, one per completion, a settings document. Version 19's sync writes
+// something else entirely.
+//
+// A rules file that describes the wrong data is worse than no comment at all, because the next
+// person reads it and believes it. The permissions are unchanged; the description now matches the
+// code.
+//
+// -----------------------------------------------------------------------------------------------
+// WHY THIS FILE MATTERS MORE THAN THE SYNC CODE
+//
+// Firestore's DEFAULT rules are not "deny everything" for a project in test mode - they are
+// "allow read, write: if true", which means ANYONE on the internet can read every user's data with
+// nothing but the project id, which ships inside the APK.
+//
+// So the sync is not finished when the data moves. It is finished when these rules are published.
+// An app that syncs without them is worse than one that never syncs at all, because it hands a
+// stranger a copy of the user's route.
+//
+// -----------------------------------------------------------------------------------------------
+// THE SHAPE OF THE DATA - what the app ACTUALLY writes
+//
+//   users/{uid}/cloud/backup      ONE document holding the whole database as JSON
+//
+// That is the entire current shape. The document holds:
+//
+//   json              the whole backup, exactly as the file export writes it
+//   formatVersion     1
+//   exportedAt        when the phone built it
+//   storeCount        \
+//   completionCount    > readable in the console without parsing the json
+//   updatedAt         /
+//   deviceLabel       which phone wrote it
+//
+// The counts and the timestamp are duplicated out of the json on purpose: they are what makes the
+// document legible in the Firebase console, which is how the user confirms a save actually landed.
+// The `json` is the only thing ever restored from.
+//
+// Everything lives UNDER the user's own uid, and that is the whole security model: the rule is not
+// "does this person own this document", it is "is this document inside their own folder". There is
+// no query to get wrong and no field to forget to check.
+// ===============================================================================================
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------------------------------------------------------------------------------------------
+    // The gate.
+    //
+    // Every rule below is `request.auth.uid == uid`. An unauthenticated caller fails that comparison
+    // on a null, which is why `request.auth != null` is checked explicitly first - a null uid would
+    // otherwise be compared against a null path segment.
+    // ---------------------------------------------------------------------------------------------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // The user's own folder, and everything in it.
+    //
+    // A recursive match rather than a rule per collection: every document this app writes lives under
+    // users/{uid}/, so one rule covers the cloud backup today and anything added later. A new
+    // collection is protected by default instead of being forgotten - which is the failure mode that
+    // actually happens.
+    //
+    // The trade-off, stated honestly: this grants the owner access to ANY path under their own uid,
+    // not just the one the app currently uses. That is acceptable because the blast radius is their
+    // own data - it cannot reach another account or the project. Narrow it to
+    // `match /users/{uid}/cloud/{document}` if you would rather add a rule per feature and accept
+    // that a forgotten one silently blocks a new feature instead of silently allowing it.
+    // ---------------------------------------------------------------------------------------------
+    match /users/{uid} {
+
+      allow read: if isOwner(uid);
+
+      // Create and update only. DELETE is deliberately absent: a user cannot delete their account
+      // document from the client, because doing so would orphan the subcollection beneath it rather
+      // than remove it - the backup would survive with no parent, invisible to the app and still
+      // billed. Account deletion is a server-side operation.
+      allow create, update: if isOwner(uid);
+
+      match /{document=**} {
+        allow read: if isOwner(uid);
+        allow create, update: if isOwner(uid);
+        allow delete: if isOwner(uid);
+      }
+    }
+
+    // ---------------------------------------------------------------------------------------------
+    // Everything else is closed.
+    //
+    // There is no catch-all `allow` anywhere above, and Firestore denies by default - so any path
+    // outside users/{uid}/ is unreachable from a client.
+    //
+    // Note the absence of `match /{document=**} { allow read, write: if false; }`, which the console
+    // often starts you with. It is not a safety net: Firestore allows a request if ANY matching rule
+    // allows, so a `false` block cannot veto the rules above - it only looks like it does.
+    // https://firebase.google.com/docs/firestore/security/rules-structure
+    // ---------------------------------------------------------------------------------------------
+  }
+}
+
+// ===============================================================================================
+// AFTER PUBLISHING - CHECK IT, DO NOT ASSUME IT
+//
+// The rules above are only worth anything if they actually deny. Two checks, both quick:
+//
+// 1. SIGNED OUT. In the Firebase console's Rules Playground, simulate a read of
+//    users/some-other-uid/cloud/backup with authentication DISABLED. It must be DENIED.
+//
+// 2. THE WRONG USER. Simulate a read of users/someone-elses-uid/cloud/backup with authentication as a
+//    different uid. It must also be DENIED. This is the one that catches a rule written as
+//    `isSignedIn()` instead of `isOwner(uid)` - which would let any signed-in user read everyone.
+//
+// 3. THE RIGHT USER. Simulate a write to users/YOUR-OWN-uid/cloud/backup as yourself. It must be
+//    ALLOWED - otherwise the app's Save button fails with a permission error and the console shows
+//    nothing about why.
+//
+// A rule that has never been tested is a rule that is probably wrong, and the failure mode here is
+// silent: the app works perfectly while the data is exposed.
+// ===============================================================================================

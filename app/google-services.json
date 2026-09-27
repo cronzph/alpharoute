@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "435665089597",
+    "project_id": "alpharoute-e4d9e",
+    "storage_bucket": "alpharoute-e4d9e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:435665089597:android:d248c5940054e592892654",
+        "android_client_info": {
+          "package_name": "com.cph.alpharoute"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "435665089597-jtg4afuj752dnk6tpb04o6tvihcsuts3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.cph.alpharoute",
+            "certificate_hash": "d18ef6ee95c6a3b78367d754532224685bafdc7d"
+          }
+        },
+        {
+          "client_id": "435665089597-7uptd3h3giosa8p01g4ps1h5hfg0rjbg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCL06yaEZVA3qjpENuSXbSJXZ4T_avxV5Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "435665089597-7uptd3h3giosa8p01g4ps1h5hfg0rjbg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

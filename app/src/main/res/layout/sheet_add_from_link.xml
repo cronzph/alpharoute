@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Add from a link (Phase 3.8). Opened from the Map tab's link button.
+
+  One field, one result line, and three actions. The sheet exists because the location comes from somewhere
+  else - Google Maps already knows where every Alfamart is, so there is no reason to hunt for it on our own
+  map and pin it by eye.
+
+  It hands off to the existing Add Store form once a location has been read. That form is not modified: it
+  already takes a latitude and a longitude, and where they came from is not its business.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_solid"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_place_link_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/place_link_title"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/place_link_caption"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/til_place_link"
+            style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:hint="@string/place_link_field_hint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/et_place_link"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textUri"
+                android:maxLines="2" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/place_link_progress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!-- The resolved coordinates, or the reason there are none. -->
+        <TextView
+            android:id="@+id/tv_place_link_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+            tools:text="Found: 14.599528, 120.984206" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_place_link_paste"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/place_link_action_paste" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_place_link_cancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/store_action_cancel" />
+
+            <!--
+              Disabled until a location has actually been read. The whole point of this sheet is to hand a
+              real coordinate to the Add Store form, so continuing without one would produce a store with
+              nowhere to be.
+            -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_place_link_continue"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:enabled="false"
+                android:text="@string/place_link_action_continue" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

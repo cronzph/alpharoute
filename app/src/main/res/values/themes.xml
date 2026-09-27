@@ -1,0 +1,150 @@
+<resources>
+
+    <!--
+      The AlphaRoute theme.
+
+      Defined ONCE, here. Dark mode is handled by two mechanisms working together:
+        1. the DayNight parent switches Material's own resources, and
+        2. values-night/colors.xml redefines every md_* name below with dark values.
+
+      Because of that, this style must NOT also be declared in values-night/themes.xml. A second
+      declaration there would win in dark mode and would NOT carry the colour items below, which
+      would silently revert the whole app to Material's default purple in dark mode.
+    -->
+    <style name="Base.Theme.AlphaRoute" parent="Theme.Material3.DayNight.NoActionBar">
+
+        <!-- Primary -->
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_on_primary</item>
+        <item name="colorPrimaryContainer">@color/md_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/md_on_primary_container</item>
+
+        <!-- Secondary -->
+        <item name="colorSecondary">@color/md_secondary</item>
+        <item name="colorOnSecondary">@color/md_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/md_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/md_on_secondary_container</item>
+
+        <!-- Surfaces -->
+        <item name="colorSurface">@color/md_surface</item>
+        <item name="colorOnSurface">@color/md_on_surface</item>
+        <item name="colorSurfaceVariant">@color/md_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/md_on_surface_variant</item>
+        <item name="colorSurfaceContainerLowest">@color/md_surface_container_lowest</item>
+        <item name="colorSurfaceContainerLow">@color/md_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/md_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/md_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/md_surface_container_highest</item>
+
+        <!-- Lines and errors -->
+        <item name="colorOutline">@color/md_outline</item>
+        <item name="colorError">@color/md_error</item>
+        <item name="colorOnError">@color/md_on_error</item>
+
+        <!--
+          THE GLASS BACKDROP (Version 11).
+
+          The gradient lives on the WINDOW rather than on each screen's root layout, and that is the
+          decision the whole glassmorphism effect rests on:
+
+            - every screen gets it for free, with no per-layout work and no chance of one being missed;
+            - the launch window and the first drawn frame use it too, so there is no flash of a flat
+              colour before the first layout pass; and
+            - the night variant is chosen by the resource system, because drawable-night/ works exactly
+              like values-night/.
+
+          The screens themselves must therefore have TRANSPARENT roots. An opaque root would cover this
+          and turn every translucent card into a flat panel with a faint tint - the effect would be gone,
+          and nothing would look broken enough to explain why.
+        -->
+        <item name="android:windowBackground">@drawable/bg_glass_gradient</item>
+
+        <!--
+          Bottom sheets and dialogs are translucent panes, not opaque surfaces. Material 3 defaults
+          colorSurfaceContainerLow here, which would be an opaque slab over the gradient.
+        -->
+        <item name="bottomSheetDialogTheme">@style/Theme.AlphaRoute.BottomSheet</item>
+        <item name="materialAlertDialogTheme">@style/Theme.AlphaRoute.Dialog</item>
+
+        <!--
+          The status and navigation bars are deliberately NOT set here.
+
+          MainActivity calls EdgeToEdge.enable(this), and androidx.activity sets both bars
+          transparent AND picks the correct light/dark icon appearance from the current UI mode.
+          Setting android:statusBarColor or android:windowLightStatusBar in the theme would duplicate
+          that work, would need a separate value for dark mode, and android:statusBarColor is
+          deprecated and ignored from API 35 anyway.
+        -->
+    </style>
+
+    <style name="Theme.AlphaRoute" parent="Base.Theme.AlphaRoute" />
+
+    <!--
+      Bottom sheets (Version 11).
+
+      The sheet's own background is replaced with the chrome colour and a 28dp top-corner radius. The
+      dim behind it is lighter than Material's default: at the default 0.6 the gradient behind the sheet
+      goes almost black, and a pane of glass over black is just a dark rectangle.
+
+      The style must live HERE and not in values-night/themes.xml - a duplicate declaration there would
+      win in dark mode and would not carry these items.
+    -->
+    <style name="Theme.AlphaRoute.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.AlphaRoute.BottomSheet.Modal</item>
+        <item name="android:backgroundDimAmount">0.5</item>
+    </style>
+
+    <!--
+      A sheet is a POPUP, and popups are OPAQUE (Version 16).
+
+      This is a rule now, not a preference: glassmorphism belongs to the surfaces you read THROUGH on the
+      way to something else - the cards on a screen. A popup is a surface you read, and anything showing
+      through it competes with the text you are being asked to read and act on.
+
+      md_surface_container_high is opaque in both modes, which is the point.
+    -->
+    <style name="Widget.AlphaRoute.BottomSheet.Modal" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/md_surface_container_high</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.AlphaRoute.Sheet</item>
+    </style>
+
+    <!-- Rounded at the top only - the bottom edge is off-screen. See drawable/bg_glass_sheet.xml. -->
+    <style name="ShapeAppearance.AlphaRoute.Sheet" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">28dp</item>
+        <item name="cornerSizeTopRight">28dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <!--
+      Dialogs (Version 11).
+
+      Rounder than Material's default and filled with the chrome colour. Deliberately the MOST opaque
+      surface in the app: a dialog is a question the user has to read and answer, and one they have to
+      squint at is a worse trade than a slightly less glassy corner.
+    -->
+    <style name="Theme.AlphaRoute.Dialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="dialogCornerRadius">24dp</item>
+        <!-- Opaque, like the sheet above - a popup is read, not seen through. -->
+        <item name="colorSurfaceContainerHigh">@color/md_surface_container_high</item>
+    </style>
+
+
+    <!--
+      Launch theme.
+
+      This is applied to <application> in the manifest, so it is what the system shows while the
+      process starts. MainActivity calls SplashScreen.installSplashScreen(this) and the library then
+      swaps the activity over to postSplashScreenTheme (the real theme above).
+
+      No extra Activity is involved - architecture decision AD-1 keeps this project to a single
+      Activity, and the Android SplashScreen API gives us the launch screen without breaking that.
+    -->
+    <style name="Theme.AlphaRoute.Splash" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_background</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/ic_splash_logo</item>
+        <item name="postSplashScreenTheme">@style/Theme.AlphaRoute</item>
+    </style>
+
+</resources>

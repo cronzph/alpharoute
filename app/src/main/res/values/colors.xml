@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AlphaRoute light colour scheme.
+
+  Two groups of colour live here:
+
+  1. md_*  - the Material 3 colour roles used by Theme.AlphaRoute. The dark-mode counterparts are in
+             values-night/colors.xml under the SAME names, so the theme never has to know which mode
+             it is in.
+
+  2. Map markers - semantic colours for the store pins. These deliberately have NO night variant:
+             they are drawn on the map tiles, not on the app surface, so they must look the same in
+             light and dark. Colour is never the only signal - each marker also has a different shape
+             (see Phase 0.3 s13.15) and a contentDescription for TalkBack.
+-->
+<resources>
+
+    <!-- Material 3 colour roles - light -->
+    <color name="md_primary">#1565C0</color>
+    <color name="md_on_primary">#FFFFFF</color>
+    <color name="md_primary_container">#D6E3FF</color>
+    <color name="md_on_primary_container">#001B3E</color>
+    <color name="md_secondary">#565E71</color>
+    <color name="md_on_secondary">#FFFFFF</color>
+    <color name="md_secondary_container">#DAE2F9</color>
+    <color name="md_on_secondary_container">#131C2B</color>
+    <color name="md_surface">#FDFBFF</color>
+    <color name="md_on_surface">#1A1B1F</color>
+    <color name="md_surface_variant">#E1E2EC</color>
+    <color name="md_on_surface_variant">#44474F</color>
+    <color name="md_outline">#74777F</color>
+    <color name="md_error">#BA1A1A</color>
+    <color name="md_on_error">#FFFFFF</color>
+
+    <!-- Material 3 surface container roles: used by cards, bottom sheets and the navigation bar -->
+    <color name="md_surface_container_lowest">#FFFFFF</color>
+    <color name="md_surface_container_low">#F6F7FB</color>
+    <color name="md_surface_container">#F0F1F6</color>
+    <color name="md_surface_container_high">#EAEBF0</color>
+    <color name="md_surface_container_highest">#E4E5EA</color>
+
+    <!--
+      ==========================================================================
+      GLASSMORPHISM - light
+      ==========================================================================
+
+      The app's look since Version 11. A soft gradient behind everything, and cards that are
+      translucent panes over it rather than opaque blocks.
+
+      THE ONE RULE THAT MATTERS: the alpha values below are not decoration. Glass reads as glass only
+      when there is something behind it to see. Every screen root must be transparent so the window
+      gradient shows through - if a root keeps an opaque background, the cards become flat panels with
+      a faint tint and the effect is lost.
+
+      The counterpart values are in values-night/colors.xml under the SAME names, so no layout and no
+      Java ever has to know which mode is active.
+    -->
+
+    <!--
+      The window gradient. Three soft stops; see drawable/bg_glass_gradient.xml.
+
+      DEEPENED from the first pass. The original three were all within a few points of white, which meant
+      there was almost nothing to see through a translucent card - and a pane you cannot see through is a
+      flat panel with a faint tint. Glass needs contrast behind it, so these are genuinely coloured.
+
+      They are still light: this app is used outdoors, in a van, in daylight, and a saturated backdrop
+      would fight the map tiles and the numbers the driver has to read.
+    -->
+    <color name="glass_gradient_start">#D5E4FA</color>
+    <color name="glass_gradient_mid">#EBDDF6</color>
+    <color name="glass_gradient_end">#D2E7F3</color>
+
+    <!--
+      The two colour blobs. Raised to 30% alpha from 20% for the same reason as the gradient above: the
+      blobs are what the glass is refracting, and at 20% over a pale backdrop they were invisible.
+    -->
+    <color name="glass_blob_primary">#4D2E7CF6</color>
+    <color name="glass_blob_secondary">#42B06BE8</color>
+
+    <!--
+      The same two hues at zero alpha, for the outer stop of each radial gradient.
+
+      NOT @android:color/transparent. That is transparent BLACK, and fading a blue blob to transparent
+      black passes through grey - which shows up as a dirty smudge around the edge of the blob rather
+      than a clean fade. Fading to a transparent version of the same hue keeps the colour true the whole
+      way out.
+    -->
+    <color name="glass_blob_primary_end">#002E7CF6</color>
+    <color name="glass_blob_secondary_end">#00B06BE8</color>
+
+    <!--
+      A card's fill: white at 72%. Opaque enough that text stays readable over any part of the
+      gradient, translucent enough that the colour behind it still shows.
+    -->
+    <color name="glass_fill">#B8FFFFFF</color>
+
+    <!-- A slightly stronger fill, for cards that must stand out from the ones around them -->
+    <color name="glass_fill_strong">#D9FFFFFF</color>
+
+    <!-- A tinted fill, for the round-complete and empty-state cards that used to be colourSecondaryContainer -->
+    <color name="glass_fill_accent">#C4D6E3FF</color>
+
+    <!-- The 1dp hairline. Lighter than the fill, which is what makes an edge look like a glass rim -->
+    <color name="glass_stroke">#99FFFFFF</color>
+
+    <!--
+      The toolbar, the bottom bar and the sheets: 97% opaque.
+
+      MUCH more opaque than a card (glass_fill is 72%), and raised from 85% after a real bug.
+
+      WHY: content scrolls UNDER these bars. At 85% the text underneath was still legible through them,
+      so a scrolled list collided with the toolbar title and read as two overlapping layers of text. That
+      is not a subtle tint - it is unreadable.
+
+      A card has nothing behind it but the gradient, so it can be properly translucent. A bar has the whole
+      scrolling app behind it, so it cannot. Same palette, different job.
+    -->
+    <color name="glass_chrome">#F7FDFBFF</color>
+
+    <!--
+      Chrome at ZERO alpha, for the outer stop of the edge fades.
+
+      Same rule as the blob ends: not @android:color/transparent, which is transparent BLACK and would fade
+      a near-white chrome through grey.
+    -->
+
+    <!--
+      The rim of the hero card - the Dashboard's suggestion. A coloured edge is what separates "the answer"
+      from the nine figures around it, and a rim rather than a fill because the fill has to stay glass.
+    -->
+    <color name="glass_stroke_accent">#8C2E7CF6</color>
+
+    <!-- A scrim for behind bottom sheets, so the glass sheet reads as floating above the content -->
+    <color name="glass_scrim">#4D000000</color>
+
+    <!-- Map markers and route line: identical in light and dark -->
+    <color name="marker_pending">#F57C00</color>
+    <color name="marker_completed">#2E7D32</color>
+    <color name="marker_home">#5E35B1</color>
+    <color name="marker_current">#1E88E5</color>
+    <color name="route_line">#1565C0</color>
+
+    <!-- Splash screen window background -->
+    <color name="splash_background">#1565C0</color>
+
+    <!--
+      Map overlay colours. Like the marker colours above, these sit on top of map tiles rather than on
+      the app surface, so they deliberately have no night variant - the map looks the same in light and
+      dark mode, and the attribution must stay legible over any tile it happens to land on.
+    -->
+    <color name="map_attribution_scrim">#99000000</color>
+    <color name="map_attribution_text">#FFFFFFFF</color>
+
+    <!--
+      The accuracy circle around the current-location dot. A GPS reading is a circle of probability,
+      not a point, and drawing it is what stops a coarse fix from looking like a precise one.
+    -->
+    <color name="map_accuracy_fill">#261E88E5</color>
+    <color name="map_accuracy_stroke">#661E88E5</color>
+
+    <!--
+      Store status chip - light.
+
+      These DO have a night variant, unlike the marker colours above, because the chip sits on the app
+      surface rather than on a map tile.
+
+      A light container with dark text is used rather than the marker colour itself, and that is a
+      readability decision, not a taste one: white text on marker_pending (#F57C00) is only about
+      2.6:1, which is not legible at chip size, whereas #E65100 on #FFE0B2 is comfortably past 4.5:1.
+      The chip still reads as orange or green, so the colour signal survives - and the chip's own text
+      says "Pending" or "Completed", so colour is never the only signal.
+    -->
+    <color name="status_pending_container">#FFE0B2</color>
+    <color name="status_on_pending_container">#E65100</color>
+    <color name="status_completed_container">#C8E6C9</color>
+    <color name="status_on_completed_container">#1B5E20</color>
+
+</resources>

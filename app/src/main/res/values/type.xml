@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  AlphaRoute typography.
+
+  The Material 3 type scale is already applied by Theme.Material3.DayNight.NoActionBar. These styles
+  give the app's recurring text roles a name, so later phases never hardcode a size or a colour:
+
+    CardLabel     - the small grey caption above a stat value ("Completed today")
+    CardValue     - the big number in a stat card
+    ListTitle     - the primary line of a list row (store name)
+    ListSubtitle  - the secondary line of a list row (code / area)
+    ScreenTitle   - the toolbar title
+    Caption       - fine print (coordinates, timestamps, "approximate")
+
+  No custom font file is used: the system font through the Material 3 scale is deliberate, so the app
+  adds no download size and matches the rest of the device.
+-->
+<resources>
+
+    <style name="TextAppearance.AlphaRoute.ScreenTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.AlphaRoute.CardLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="TextAppearance.AlphaRoute.CardValue" parent="TextAppearance.Material3.HeadlineSmall">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.AlphaRoute.ListTitle" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
+
+    <style name="TextAppearance.AlphaRoute.ListSubtitle" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+    <style name="TextAppearance.AlphaRoute.Caption" parent="TextAppearance.Material3.BodySmall">
+        <item name="android:textColor">?attr/colorOnSurfaceVariant</item>
+    </style>
+
+</resources>

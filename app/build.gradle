@@ -1,0 +1,172 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.google.gms.google.services)
+}
+
+// ---------------------------------------------------------------------------------------------
+// The openrouteservice API key.
+//
+// It is read from local.properties at the project root, NOT from this file and NOT from a Java file.
+// The reason is the one that matters for any secret: local.properties is already listed in .gitignore,
+// so it cannot be committed by accident, whereas a .java file is exactly the kind of file that gets
+// shared. Putting the key here and turning it into a build constant keeps it out of the source tree
+// entirely - there is no file in app/src that contains it.
+//
+// The file may not exist (a fresh clone, or a machine that has never opened the project in Android
+// Studio), and it may exist without a key. Both are ordinary states, so a missing key becomes an
+// empty string rather than a build failure - and RoutingConfig.isConfigured() turns that into a clean
+// "not set up yet" answer instead of a request that fails at runtime.
+//
+// To set it, add one line to local.properties:
+//     ORS_API_KEY=your_key_here
+// then do a CLEAN build - see the note on constant inlining in docs/PHASE_4.1_ROUTING_PREPARATION.md.
+// ---------------------------------------------------------------------------------------------
+def localProperties = new Properties()
+def localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localPropertiesFile.withInputStream { localProperties.load(it) }
+}
+
+// Escaped before it is written into generated Java. An unescaped quote or backslash would produce a
+// BuildConfig.java that does not compile, and the error would point at generated code rather than at
+// the line in local.properties that caused it.
+def orsApiKey = (localProperties.getProperty("ORS_API_KEY") ?: "")
+        .replace("\\", "\\\\")
+        .replace("\"", "\\\"")
+
+// -----------------------------------------------------------------------------------------------
+// The Google Sign-In web client ID, read from google-services.json.
+//
+// A web client is the oauth_client whose client_type is 3. Firebase needs it to exchange a Google ID
+// token for a Firebase session - the Android client (type 1) is not enough on its own.
+//
+// Every failure here is deliberately silent and yields an empty string, because "no client yet" is an
+// ordinary state on a project that has not finished its Firebase console setup - and a build that
+// refuses to run in that state would block every other feature behind a console step.
+// -----------------------------------------------------------------------------------------------
+def googleWebClientId = ""
+def googleServicesFile = file("google-services.json")
+if (googleServicesFile.exists()) {
+    try {
+        def googleServices = new groovy.json.JsonSlurper().parseText(googleServicesFile.text)
+        googleServices.client?.each { client ->
+            client.oauth_client?.each { oauthClient ->
+                if (oauthClient.client_type == 3 && !googleWebClientId) {
+                    googleWebClientId = oauthClient.client_id ?: ""
+                }
+            }
+        }
+    } catch (Exception ignored) {
+        // A malformed or half-downloaded file leaves the id empty, which the app reports as "not
+        // configured". The google-services plugin will fail the build itself if the file is unusable.
+    }
+}
+
+android {
+    namespace 'com.cph.alpharoute'
+    compileSdk {
+        version = release(36) {
+            minorApiLevel = 1
+        }
+    }
+
+    defaultConfig {
+        applicationId "com.cph.alpharoute"
+        minSdk 24
+        targetSdk 36
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        // The openrouteservice key, from local.properties (see the note at the top of this file).
+        // Empty when it has not been set, which is a state the app must build and run in.
+        buildConfigField "String", "ORS_API_KEY", "\"${orsApiKey}\""
+
+        // -----------------------------------------------------------------------------------------
+        // The Google Sign-In web client ID (Version 14).
+        //
+        // Read out of google-services.json at build time rather than from R.string.default_web_client_id.
+        // The google-services plugin generates that resource ONLY when the file contains an oauth_client
+        // of type 3 - so referencing it now would fail the build outright, and referencing it after the
+        // fact would be a hidden dependency on a console step.
+        //
+        // Parsed here, a missing client becomes an EMPTY STRING instead. That is the whole point: the app
+        // builds and runs today, and the Sign-in button reports "not configured yet" rather than crashing
+        // with DEVELOPER_ERROR. The moment the SHA-1 is registered and the json is re-downloaded, this
+        // picks the value up with no code change at all.
+        // -----------------------------------------------------------------------------------------
+        buildConfigField "String", "GOOGLE_WEB_CLIENT_ID", "\"${googleWebClientId}\""
+
+        // Room writes a JSON description of every schema version into app/schemas.
+        // Those files MUST be kept: they are what makes a future migration testable rather than
+        // guesswork, which matters because destructive migrations are not permitted once real route
+        // data exists.
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    buildFeatures {
+        buildConfig true
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+        coreLibraryDesugaringEnabled true
+    }
+}
+
+dependencies {
+    // Version 15: Google Sign-In moved to a browser tab (FirebaseAuth.startActivityForSignInWithProvider),
+    // so the Credential Manager / Google Identity Services libraries this project used through Version 14
+    // are no longer referenced anywhere and have been dropped - see AuthRepository for why.
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+    coreLibraryDesugaring libs.desugar.jdk.libs
+
+    // Room - the local database and the single source of truth (AD-4).
+    implementation libs.room.runtime
+    annotationProcessor libs.room.compiler
+
+    // Lifecycle - ViewModels and LiveData. LiveData rather than StateFlow because this is a Java
+    // project and coroutines are Kotlin (AD-2).
+    implementation libs.lifecycle.viewmodel
+    implementation libs.lifecycle.livedata
+    implementation libs.lifecycle.runtime
+
+    // osmdroid - the map, drawn from OpenStreetMap tiles. Chosen under architecture decision D1:
+    // no API key, no billing account, no card. See docs/MAP_NAVIGATION_OPTIONS.md.
+    implementation libs.osmdroid.android
+
+    // play-services-location - the fused location provider. Free, no API key, no billing. This is the
+    // only Google dependency in the project, and it is not a Maps Platform SKU.
+    implementation libs.play.services.location
+
+    implementation libs.activity.ktx
+    implementation libs.appcompat
+    implementation libs.constraintlayout
+    implementation libs.core.splashscreen
+    implementation libs.material
+    testImplementation libs.junit
+
+    // TEST ONLY - see the note in gradle/libs.versions.toml. Android's own org.json is a stub on the
+    // JVM, so the route parser needs a real copy to be testable. It is not in the APK.
+    testImplementation libs.json
+
+    // TEST ONLY - runs LiveData work on the calling thread, so NavigationSession's rules can be tested on
+    // the JVM. There is no main looper off a device, and postValue() would otherwise never deliver.
+    testImplementation libs.arch.core.testing
+
+    androidTestImplementation libs.espresso.core
+    androidTestImplementation libs.ext.junit
+}

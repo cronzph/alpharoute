@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  HOME: a deep purple house silhouette.
+
+  A plain house rather than a third teardrop, and that is the accessibility decision (Phase 0.3 s13.15):
+  a pending store is a teardrop with a filled circle, a completed store is a teardrop with a check, and
+  Home is a house. Somebody who cannot separate orange from green can still tell all three apart, and
+  nobody can mistake Home for a store - which matters, because Home is never counted as one.
+
+  36dp like the store pins, because it sits on the map at whatever zoom the user chose.
+
+  The white stroke is there for the same reason the completed pin's check is stroked rather than filled:
+  a deep purple silhouette can disappear against a dark map tile or a satellite-style background. The
+  outline keeps the shape readable whatever is underneath it, without changing the colour that carries
+  the meaning.
+
+  The anchor is set in MapMarkerController to bottom-centre, so the base of the house sits on the Home
+  coordinate.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/marker_home"
+        android:pathData="M10,20v-6h4v6h5v-8h3L12,3 2,12h3v8z"
+        android:strokeColor="#FFFFFFFF"
+        android:strokeWidth="1" />
+</vector>

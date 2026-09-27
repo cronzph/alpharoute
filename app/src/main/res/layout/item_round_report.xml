@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One round in the round report (Phase 12).
+
+  A glass card, like everything else since Version 11. The header answers the three questions at a glance -
+  which round, how many stores, how many days - and the day rows below it break that down.
+
+  The day rows are added to `group_round_days` in code rather than by a nested RecyclerView. A round has a
+  handful of days, the whole card is one scroll item, and a nested scrolling list inside a scrolling list is
+  a known source of measurement bugs for no benefit at this size.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.AlphaRoute.StatCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_round_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+            tools:text="Round 2" />
+
+        <!-- "65 stores · 4 days" - the headline the whole screen exists for. -->
+        <TextView
+            android:id="@+id/tv_round_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.CardValue"
+            tools:text="65 stores · 4 days" />
+
+        <!-- "1 Sep 2026 – 4 Sep 2026" -->
+        <TextView
+            android:id="@+id/tv_round_range"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            tools:text="1 Sep 2026 – 4 Sep 2026" />
+
+        <!-- The day rows are added here in code. -->
+        <LinearLayout
+            android:id="@+id/group_round_days"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

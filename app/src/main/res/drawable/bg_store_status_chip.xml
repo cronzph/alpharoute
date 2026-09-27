@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The rounded background behind the store status chip on the Store Details sheet.
+
+  ONE drawable for both statuses, tinted at runtime with the pending or completed container colour.
+  That is why the shape carries no colour of its own that matters - the tint always wins. The solid
+  below is the pending container rather than an arbitrary white, so the drawable is still correct if it
+  is ever previewed in the layout editor on its own.
+
+  The colours themselves live in colors.xml / values-night/colors.xml, so the chip adapts to dark mode
+  like everything else on the app surface. See StoreDetailBottomSheet.applyStatusChip.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <corners android:radius="8dp" />
+
+    <solid android:color="@color/status_pending_container" />
+
+</shape>

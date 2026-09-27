@@ -1,0 +1,500 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Store Details sheet (Phase 3.5). Screen 5 of the Phase 0.3 screen plan.
+
+  Opened by tapping a store marker on the Map. Everything here is READ-ONLY: this sheet shows what the
+  database holds and nothing else. It has no editable field, because the only way a store's details
+  change is through the Add / Edit form (Phase 3.6).
+
+  ================================================================================================
+  LAYOUT (Version 19)
+
+  The five stored fields used to be a stack of label-above-value pairs: a small grey caption, then a
+  line of value, then 12dp, then the next caption. Five fields came to roughly half a screen of very
+  tall, very sparse text, and it read as a form that had been dumped rather than as a summary.
+
+  They are now a KEY-VALUE LIST - label on the left, value on the right, a hairline between rows. The
+  same five facts take about half the height, the eye can scan down the values in one column instead of
+  hunting for where each one starts, and it is the pattern every settings screen on the phone already
+  uses.
+
+  The label column has a minimum width so all five values line up. The value column takes whatever is
+  left, so a long store name or a coordinate pair wraps inside its own half rather than pushing the
+  label around.
+
+  ================================================================================================
+  WHAT IS DELIBERATELY NOT HERE
+
+  1. NO AUTOMATIC COMPLETION. Nothing on this sheet counts a store by itself. "Store completed?" opens
+     the confirmation dialog, and that dialog's YES is the one gate in the app - see
+     CompletionConfirmDialogFragment. The arrival radius stopped gating this button in Version 18.2,
+     because hiding it from drivers with a weak fix withheld it from the people who needed it most.
+
+  2. NO MAP. The coordinates are shown as text. Tapping the row to centre the map was considered and
+     rejected: it would make a read-only fact look tappable, and the Map tab is one gesture away.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_solid"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp">
+
+        <!--
+          Title and status on ONE line.
+
+          The chip used to sit on a line of its own under the title, which cost a whole row to say one
+          word. Beside the title it reads as a label for the sheet rather than as a sixth field.
+        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tv_store_detail_title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/store_detail_title"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle" />
+
+            <!--
+              Non-interactive on purpose - it reports, it does not act.
+
+              A TextView with a tinted rounded background rather than a Material Chip, and that is a
+              deliberate choice: a Chip draws its own text through a ChipDrawable that takes its colour
+              at inflation time, so switching the chip between orange and green at runtime means fighting
+              the component for control of its own label. A TextView is a surface this sheet owns, so
+              both the container tint and the text colour are set directly and nothing can override them.
+
+              Its text is what carries the meaning; the colour only reinforces it. Orange and green are
+              the classic red/green-confusion pair, so the status must be readable from the word alone.
+            -->
+            <TextView
+                android:id="@+id/tv_store_status_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:background="@drawable/bg_store_status_chip"
+                android:paddingStart="12dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="6dp"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel"
+                tools:text="@string/store_status_pending" />
+
+        </LinearLayout>
+
+        <!--
+          Shown while the store is re-read from Room by id. The sheet is opened with nothing but a store
+          id, so there is always a moment - short, but real - before there is anything to display.
+        -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/store_detail_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:contentDescription="@string/store_detail_loading"
+            android:indeterminate="true" />
+
+        <!-- Everything below is revealed only once the store has actually been read. -->
+        <LinearLayout
+            android:id="@+id/group_store_detail_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <!-- ==================== the five stored fields ==================== -->
+
+            <!-- Route number -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="104dp"
+                    android:text="@string/store_field_route_number"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_store_detail_route_number"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="R-01" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.35"
+                android:background="?attr/colorOutline" />
+
+            <!-- Store code -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="104dp"
+                    android:text="@string/store_field_store_code"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_store_detail_store_code"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="123456" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.35"
+                android:background="?attr/colorOutline" />
+
+            <!-- Store name -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="104dp"
+                    android:text="@string/store_field_store_name"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_store_detail_store_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="Alfamart Sample Street" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.35"
+                android:background="?attr/colorOutline" />
+
+            <!-- Area -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="104dp"
+                    android:text="@string/store_field_area"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_store_detail_area"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="Sample Barangay" />
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:alpha="0.35"
+                android:background="?attr/colorOutline" />
+
+            <!-- Coordinates. Last, and the only value likely to wrap onto a second line. -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="104dp"
+                    android:text="@string/store_detail_label_coordinates"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_store_detail_coordinates"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="14.599500, 120.984200" />
+
+            </LinearLayout>
+
+            <!--
+              The Completion section. Hidden for a pending store, and revealed only when a completion
+              record for this store was actually found - not merely because the store's status says
+              COMPLETED. A store marked completed with no history row is a data inconsistency, and the
+              honest thing to show is nothing at all rather than an invented date.
+            -->
+            <LinearLayout
+                android:id="@+id/group_store_detail_completion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/store_detail_section_completion"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <!-- Date -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="104dp"
+                        android:text="@string/store_detail_label_date"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                    <TextView
+                        android:id="@+id/tv_store_detail_completed_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        tools:text="25 Sep 2026" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:alpha="0.35"
+                    android:background="?attr/colorOutline" />
+
+                <!-- Time -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="104dp"
+                        android:text="@string/store_detail_label_time"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                    <TextView
+                        android:id="@+id/tv_store_detail_completed_time"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        tools:text="10:12 AM" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:alpha="0.35"
+                    android:background="?attr/colorOutline" />
+
+                <!-- Daily order -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="104dp"
+                        android:text="@string/store_detail_label_daily_order"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                    <TextView
+                        android:id="@+id/tv_store_detail_daily_order"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="end"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        tools:text="#3" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!--
+              Why Delete is unavailable. Shown only for a completed store, and placed directly above the
+              action row so it reads as an explanation of the row below it rather than as another fact
+              about the store.
+
+              The Delete button is disabled rather than hidden: a missing button looks like a feature
+              that was forgotten, whereas a disabled one with a reason next to it says the rule out loud.
+            -->
+            <TextView
+                android:id="@+id/tv_store_detail_delete_note"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/store_delete_note_with_history"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+        <!-- ==================== the actions ====================
+          Three levels, stated by fill rather than by position, so the sheet answers "what do I do here?"
+          before it is read:
+
+            Get directions    filled   the one action that starts something
+            Store completed?  tonal    the other thing you might be here for
+            Edit/Delete/Close text     housekeeping, and the way out
+
+          The two big ones are full width because they are the reason the sheet was opened from a marker;
+          the three small ones sit in a row because they are all equally unlikely and none should shout.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_store_detail_directions"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="@string/store_action_get_directions" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_store_detail_complete"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/store_action_complete"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!--
+          Says WHY the completion action is not offered. Without it the button would just be missing,
+          which reads as a bug rather than as a state.
+        -->
+        <TextView
+            android:id="@+id/tv_store_detail_at_location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/store_at_location_note"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!--
+          The secondary row. Order: Edit, Delete, then Close last - Close was the only button here in
+          Phase 3.5 and it stays last, so the actions added since sit before the way out rather than
+          pushing it around.
+        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_store_detail_edit"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/store_action_edit" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_store_detail_delete"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/store_action_delete" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_store_detail_close"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/store_detail_action_close" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

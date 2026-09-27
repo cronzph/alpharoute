@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Widget styles.
+
+  Only widget-level styling lives here. Colour roles live in colors.xml / values-night/colors.xml,
+  text roles in type.xml, and the theme itself in themes.xml.
+
+  Since Version 11 the app is glassmorphic: translucent panes with a hairline rim, over the gradient in
+  drawable/bg_glass_gradient.xml. The styles below are where that is defined, so a card looks like a card
+  everywhere without any layout repeating the numbers.
+-->
+<resources>
+
+    <!--
+      The app toolbar.
+
+      Chrome, at 97% opacity.
+
+      There WAS a gradient fade at the bottom edge, so content dissolved under it instead of stopping at a
+      hard line. It was removed: content scrolls UNDER this bar, and fading it to transparent meant the
+      scrolled text stayed legible and collided with the title - two layers of text over each other, which
+      is what a user reported as "overlapping" on the Completion screen.
+
+      An app bar is not a card. A card has only the gradient behind it and can be translucent; a bar has
+      the whole scrolling app behind it and cannot.
+    -->
+    <style name="Widget.AlphaRoute.Toolbar" parent="Widget.Material3.Toolbar">
+        <item name="android:background">@color/glass_chrome</item>
+        <item name="titleTextAppearance">@style/TextAppearance.AlphaRoute.ScreenTitle</item>
+        <item name="titleCentered">false</item>
+    </style>
+
+    <!--
+      A glass card: the Dashboard's stat cards, the History day cards, the Settings panels, the suggestion
+      card, the route stop rows.
+
+      Four values make the look, and all four matter:
+
+        cardBackgroundColor  translucent white, so the gradient shows through
+        strokeColor          a 1dp hairline LIGHTER than the fill - this is what reads as a glass rim
+        strokeWidth          1dp; without it the pane has no edge and reads as a smudge
+        cardCornerRadius     24dp. Glass reads as a pane, and panes are not nearly square. Raised from
+                             20dp in the first pass: at 20dp the corner was still tight enough to read as
+                             a Material card wearing a tint rather than as glass
+
+      cardElevation stays 0dp. A drop shadow under a translucent pane looks wrong - light does not cast a
+      hard shadow through frosted glass - and Material's own elevation tint would also grey the fill.
+    -->
+    <style name="Widget.AlphaRoute.StatCard" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/glass_fill</item>
+        <item name="strokeColor">@color/glass_stroke</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!--
+      The hero card - the Dashboard's next-stop suggestion.
+
+      A coloured rim instead of the neutral one. That is what separates "the answer to why you opened the
+      app" from the seven figures around it, and a rim rather than a fill because the fill still has to be
+      glass.
+
+      The radius matches the plain card on purpose. A different radius would read as a different component,
+      not as the same component doing a more important job.
+    -->
+    <style name="Widget.AlphaRoute.StatCard.Hero" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardElevation">0dp</item>
+        <item name="cardBackgroundColor">@color/glass_fill_accent</item>
+        <item name="strokeColor">@color/glass_stroke_accent</item>
+        <item name="strokeWidth">1dp</item>
+    </style>
+
+    <!--
+      A glass card that must stand out from the ones around it: the round-complete message and the
+      empty-state notice. Same shape and rim, a stronger tinted fill.
+    -->
+    <style name="Widget.AlphaRoute.StatCard.Accent">
+        <item name="cardBackgroundColor">@color/glass_fill_accent</item>
+    </style>
+
+    <!--
+      ================================================================================================
+      A BUTTON INSIDE A BOTTOM SHEET MUST NAME ITS STYLE. THIS IS NOT A PREFERENCE.
+
+      `bottomSheetDialogTheme` is @style/Theme.AlphaRoute.BottomSheet, whose parent chain is
+
+          ThemeOverlay.Material3.BottomSheetDialog
+            -> Base.V14.ThemeOverlay.Material3.BottomSheetDialog
+              -> Base.ThemeOverlay.Material3.Dialog
+                -> materialButtonStyle = Widget.Material3.Button.TextButton.Dialog.Flush
+
+      That last line is Material's own, and it means: **inside any bottom sheet, an unstyled
+      MaterialButton is a TEXT BUTTON.** Not filled. A bare `<MaterialButton>` that looks like it will
+      be the sheet's primary action renders as plain text with no container at all.
+
+      Five sheets had exactly that - Save, Continue, "Store completed?", "Open Google Maps" and "Start
+      navigation" were all meant to be filled and were all text. It reads as a flat, unfinished screen,
+      and nothing warns you: the button works, it just does not look like a button.
+
+      So every MaterialButton in a `sheet_*.xml` carries an explicit style:
+
+          style="@style/Widget.Material3.Button"            the primary action, filled
+          style="@style/Widget.Material3.Button.TonalButton" a secondary action
+          style="@style/Widget.Material3.Button.TextButton"  housekeeping, and the way out
+
+      Verified by reading material-1.14.0.aar on 2026-09-27, not inferred from how the screen looked.
+      ================================================================================================
+    -->
+
+</resources>

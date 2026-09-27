@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Dashboard - the progress cards (Version 7: rounds).
+
+  Every figure here is computed from Room by TrackerCalculator, through DashboardViewModel. There are no
+  placeholder values and no notice card - both were deleted in Phase 6.1.
+
+  Rounds changed what two of these cards MEAN, and the layout groups them accordingly:
+
+    Round + Rounds finished   the pass in progress, and how many are behind you
+    Today + Yesterday         what was done on the day
+    Remaining + Total stores  what is left in THIS round, out of the whole list
+    Completion                how much of THIS round is done - the headline figure
+    Overall completed         every completion ever, across every round
+    Latest completed          the most recent one, by code and time
+
+  "Remaining" and "Completion" are deliberately round-scoped rather than lifetime: they are the two that
+  answer "what do I still have to do", and a lifetime figure would never go back up when a new round starts,
+  which is exactly the thing the user needs to see.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:fillViewport="true"
+    tools:context=".ui.dashboard.DashboardFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!--
+          The loading bar. Visible only until Room's first emission arrives, which is a fraction of a
+          second. It exists so the screen does not show zeros before it knows anything: "0 completed" is a
+          claim about the data, and before the first read it would be a false one.
+        -->
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/dashboard_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="true" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <!--
+              The suggestion card (Version 7). FIRST, above the figures, because it answers the question the
+              user actually opened the app with - "where do I go next" - and a dashboard that makes them read
+              nine numbers to find that out has the priorities backwards.
+
+              Three states, one card: a suggested store, the round finished, or no stores yet. The buttons
+              hide themselves in the last two, because there is nothing to navigate to.
+            -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_suggestion"
+                style="@style/Widget.AlphaRoute.StatCard.Hero"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/suggestion_title"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <TextView
+                        android:id="@+id/tv_suggestion_store"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="R-01 — Alfamart Sampaloc" />
+
+                    <TextView
+                        android:id="@+id/tv_suggestion_detail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                        android:textColor="?attr/colorOnSurface"
+                        tools:text="1.1 km away · nearest to you" />
+
+                    <!--
+                      Says the distance is a straight line. A store across a river can be close by this
+                      measure and a long drive, and the card must not imply otherwise - road distances
+                      arrive in Version 8.
+                    -->
+                    <TextView
+                        android:id="@+id/tv_suggestion_note"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                        android:textColor="?attr/colorOnSurface"
+                        android:visibility="gone"
+                        tools:text="@string/suggestion_straight_line_note"
+                        tools:visibility="visible" />
+
+                    <LinearLayout
+                        android:id="@+id/group_suggestion_actions"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:orientation="horizontal">
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_suggestion_navigate"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/suggestion_action_navigate" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_suggestion_choose"
+                            style="@style/Widget.Material3.Button.TextButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:text="@string/suggestion_action_choose" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--
+              The whole-route planner (Phase 8.4). Below the suggestion card because it is the bigger
+              question: the card says "which one next", and this says "in what order should I do all of
+              them". Shown only when there is more than one store left, because a route of one stop is the
+              suggestion card.
+            -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_plan_route"
+                style="@style/Widget.Material3.Button.TonalButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/dashboard_action_plan_route"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <!-- ============ Row 1: round / rounds finished ============ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <com.cph.alpharoute.ui.common.StatCardView
+                    android:id="@+id/card_round"
+                    style="@style/Widget.AlphaRoute.StatCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:statLabel="@string/dashboard_label_round" />
+
+                <com.cph.alpharoute.ui.common.StatCardView
+                    android:id="@+id/card_rounds_finished"
+                    style="@style/Widget.AlphaRoute.StatCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    app:statLabel="@string/dashboard_label_rounds_finished" />
+
+            </LinearLayout>
+
+            <!-- ============ Row 2: today / yesterday ============ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <com.cph.alpharoute.ui.common.StatCardView
+                    android:id="@+id/card_today"
+                    style="@style/Widget.AlphaRoute.StatCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:statLabel="@string/dashboard_label_today" />
+
+                <com.cph.alpharoute.ui.common.StatCardView
+                    android:id="@+id/card_yesterday"
+                    style="@style/Widget.AlphaRoute.StatCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    app:statLabel="@string/dashboard_label_yesterday" />
+
+            </LinearLayout>
+
+            <!-- ============ Row 3: remaining in this round / total stores ============ -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <com.cph.alpharoute.ui.common.StatCardView
+                    android:id="@+id/card_remaining"
+                    style="@style/Widget.AlphaRoute.StatCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:statLabel="@string/dashboard_label_remaining" />
+
+                <com.cph.alpharoute.ui.common.StatCardView
+                    android:id="@+id/card_total"
+                    style="@style/Widget.AlphaRoute.StatCard"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
+                    android:layout_weight="1"
+                    app:statLabel="@string/dashboard_label_total" />
+
+            </LinearLayout>
+
+            <!-- ============ Row 4: completion of this round (full width) ============ -->
+            <com.cph.alpharoute.ui.common.StatCardView
+                android:id="@+id/card_percentage"
+                style="@style/Widget.AlphaRoute.StatCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:statLabel="@string/dashboard_label_percentage" />
+
+            <!-- ============ Row 5: overall completed, all rounds (full width) ============ -->
+            <com.cph.alpharoute.ui.common.StatCardView
+                android:id="@+id/card_overall"
+                style="@style/Widget.AlphaRoute.StatCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:statLabel="@string/dashboard_label_overall" />
+
+            <!-- ============ Row 6: latest completed (full width) ============ -->
+            <com.cph.alpharoute.ui.common.StatCardView
+                android:id="@+id/card_latest"
+                style="@style/Widget.AlphaRoute.StatCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                app:statLabel="@string/dashboard_label_latest" />
+
+            <!--
+              Shown only when the round in progress is finished. It says what to do next, because a
+              completed round with no message is a dead end - the user has to find Settings themselves to
+              start the next pass.
+            -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_round_complete"
+                style="@style/Widget.AlphaRoute.StatCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/glass_fill_accent"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/dashboard_round_complete"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    android:textColor="?attr/colorOnSurface" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--
+              The empty state. Shown only when there is not a single store.
+            -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_dashboard_empty"
+                style="@style/Widget.AlphaRoute.StatCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/glass_fill_accent"
+                tools:visibility="visible">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp"
+                    android:text="@string/dashboard_empty_no_stores"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    android:textColor="?attr/colorOnSurface" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

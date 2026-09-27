@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The status-bar icon for the navigation notifications (Phase 4.3).
+
+  A navigation arrow, drawn as a plain white silhouette on a transparent background.
+
+  Two things about this file are Android requirements rather than styling choices:
+
+    - It is a SINGLE colour. From Android 5 the status bar masks every notification icon to one colour,
+      so an icon with more than one would be flattened into an unreadable blob on most phones.
+    - It is drawn at 24dp in a 24dp viewport with a few dp of padding, because the system crops the icon
+      to a fixed box and anything drawn edge to edge loses its points.
+
+  It is deliberately NOT one of the ic_nav_* icons: those are bottom-navigation drawables, tinted by the
+  theme and sized for a tab bar. A notification icon is a different kind of asset.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M12,2.5L4.5,20.2c-0.3,0.7 0.4,1.4 1.1,1.1l6.4,-3.1l6.4,3.1c0.7,0.3 1.4,-0.4 1.1,-1.1L12,2.5z" />
+</vector>

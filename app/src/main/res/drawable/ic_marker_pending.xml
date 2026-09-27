@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  A PENDING store: an orange teardrop pin containing a filled circle.
+
+  36dp rather than the usual 24dp, because a marker is not a toolbar icon - it sits on a map at whatever
+  zoom the user chose, and at 24dp it reads as a speck.
+
+  The SHAPE is what carries the meaning, not the colour (Phase 0.3 s13.15): this teardrop-with-a-circle is
+  the pending store, the teardrop-with-a-check is the completed store, and the house is Home. Orange and
+  green are the classic red/green-confusion pair, so a user who cannot separate them can still tell these
+  apart. Each marker also carries a title and contentDescription for TalkBack.
+
+  The anchor is set in MapMarkerController to bottom-centre, so the point of the teardrop sits exactly on
+  the store's coordinate.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="36dp"
+    android:height="36dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:fillColor="@color/marker_pending"
+        android:pathData="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13C19,5.13 15.87,2 12,2z" />
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M12,11.5c-1.38,0 -2.5,-1.12 -2.5,-2.5s1.12,-2.5 2.5,-2.5 2.5,1.12 2.5,2.5 -1.12,2.5 -2.5,2.5z" />
+</vector>

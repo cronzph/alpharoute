@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One stop in an optimised route (Phase 8.4, extended in Version 18).
+
+  Three lines:
+
+    #1  1.1 km · about 4 min    where it sits in the route, and the leg to reach it
+    R-01 — 123456               the identifiers
+    Alfamart Sampaloc           the name, which is what a person recognises
+
+  The sequence leads because the order IS the answer this screen exists to give. The leg distance is beside
+  it rather than on its own line, because it describes the step into this stop rather than the stop itself.
+
+  The grip on the right is new in Version 18. The number in the first line is the whole point of the screen,
+  so changing that number has to be an obvious thing to do rather than a hidden gesture - a visible grip
+  says "this row can be moved" before anyone tries pressing and holding it. Long-pressing the row body does
+  the same thing, so the grip is a hint as much as a control.
+-->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/Widget.AlphaRoute.StatCard"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="16dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_stop_sequence"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                tools:text="#1  1.1 km · about 4 min" />
+
+            <TextView
+                android:id="@+id/tv_stop_identifiers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                tools:text="R-01 — 123456" />
+
+            <TextView
+                android:id="@+id/tv_stop_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                tools:text="Alfamart Sampaloc" />
+
+        </LinearLayout>
+
+        <!--
+          Large enough to be an easy target with a thumb, and with a borderless ripple so pressing it looks
+          like picking something up rather than pressing a button.
+        -->
+        <ImageView
+            android:id="@+id/iv_stop_drag_handle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="8dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/route_stop_drag_handle"
+            android:padding="12dp"
+            android:src="@drawable/ic_drag_handle"
+            app:tint="?attr/colorControlNormal" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

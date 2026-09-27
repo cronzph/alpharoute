@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The app's window background (Version 11, glassmorphism).
+
+  A soft diagonal gradient with two colour blobs on top. This is what the translucent cards are
+  translucent OVER - the whole effect depends on there being something behind them to see, so if this
+  drawable is ever replaced with a flat colour the cards stop looking like glass and start looking like
+  pale rectangles.
+
+  It is set as `android:windowBackground` in the theme, which means:
+    - every screen gets it for free, with no per-layout work,
+    - the launch window and the first frame use it too, so there is no flash of a different colour, and
+    - the night variant in drawable-night/ is picked automatically, because resource qualifiers work on
+      drawables exactly as they do on colours.
+
+  Layer order matters: the gradient first, then the blobs over it. A layer-list draws in order, so the
+  last item ends up on top.
+
+  The blobs are placed with `android:gravity` rather than with offsets. Gravity is unambiguous - the item
+  is laid out against that edge of the container - whereas a negative offset in a layer-list is treated as
+  an inset and behaves differently from what most people expect.
+-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. The base gradient. 315 degrees is a diagonal from top-left to bottom-right. -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="315"
+                android:centerColor="@color/glass_gradient_mid"
+                android:endColor="@color/glass_gradient_end"
+                android:startColor="@color/glass_gradient_start"
+                android:type="linear" />
+        </shape>
+    </item>
+
+    <!-- 2. A blue blob in the top-right corner. The card stack sits over this one. -->
+    <item android:gravity="top|right">
+        <shape android:shape="oval">
+            <size
+                android:width="360dp"
+                android:height="360dp" />
+            <gradient
+                android:endColor="@color/glass_blob_primary_end"
+                android:gradientRadius="180dp"
+                android:startColor="@color/glass_blob_primary"
+                android:type="radial" />
+        </shape>
+    </item>
+
+    <!-- 3. A violet blob in the bottom-left, so the two corners are not the same colour. -->
+    <item android:gravity="bottom|left">
+        <shape android:shape="oval">
+            <size
+                android:width="320dp"
+                android:height="320dp" />
+            <gradient
+                android:endColor="@color/glass_blob_secondary_end"
+                android:gradientRadius="160dp"
+                android:startColor="@color/glass_blob_secondary"
+                android:type="radial" />
+        </shape>
+    </item>
+
+    <!--
+      4. A smaller blue blob, centred, at half the alpha of the corner pair.
+
+      Added in the second pass. With only two corner blobs the middle of a tall screen was flat gradient with
+      no colour in it - so a card scrolled to the middle had nothing behind it to refract, which is exactly
+      the moment the glass stops looking like glass. It is smaller and weaker than the pair because it is
+      the one the cards sit directly on top of, and it should not compete with them.
+    -->
+    <item android:gravity="center">
+        <shape android:shape="oval">
+            <size
+                android:width="240dp"
+                android:height="240dp" />
+            <gradient
+                android:endColor="@color/glass_blob_primary_end"
+                android:gradientRadius="120dp"
+                android:startColor="@color/glass_blob_primary"
+                android:type="radial" />
+        </shape>
+    </item>
+
+</layer-list>

@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AlphaRoute — Glassmorphism UI preview</title>
+<style>
+  :root{
+    --page-bg:#0b0c10;
+    --label:#9aa0a6;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    background:var(--page-bg);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    color:#e8eaed;
+    padding:32px 20px 64px;
+    display:flex;flex-direction:column;align-items:center;gap:28px;
+  }
+  h1{font-size:20px;font-weight:600;letter-spacing:-.01em}
+  .sub{font-size:13px;color:var(--label);text-align:center;max-width:640px;line-height:1.6}
+
+  .stage{display:flex;gap:36px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .col{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .cap{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--label)}
+
+  /* ---------- the phone ---------- */
+  .phone{
+    width:340px;height:700px;border-radius:38px;overflow:hidden;position:relative;
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow:0 24px 60px rgba(0,0,0,.55);
+    display:flex;flex-direction:column;
+  }
+
+  /* ---------- the gradient window background (bg_glass_gradient.xml) ---------- */
+  .bg{position:absolute;inset:0;z-index:0}
+  .bg::after{content:"";position:absolute;inset:0}
+
+  .light .bg{
+    background:linear-gradient(315deg,#D5E4FA 0%,#EBDDF6 50%,#D2E7F3 100%);
+  }
+  .light .bg::before{
+    content:"";position:absolute;width:360px;height:360px;border-radius:50%;
+    top:-90px;right:-90px;
+    background:radial-gradient(circle,#4D2E7CF6 0%,rgba(46,124,246,0) 70%);
+  }
+  .light .bg::after{
+    background:radial-gradient(circle 160px at 0% 100%,#42B06BE8 0%,rgba(176,107,232,0) 70%),radial-gradient(circle 120px at 50% 50%,#4D2E7CF6 0%,rgba(46,124,246,0) 70%);
+  }
+
+  .dark .bg{
+    background:linear-gradient(315deg,#0A0C12 0%,#161733 50%,#080F13 100%);
+  }
+  .dark .bg::before{
+    content:"";position:absolute;width:360px;height:360px;border-radius:50%;
+    top:-90px;right:-90px;
+    background:radial-gradient(circle,#592E7CF6 0%,rgba(46,124,246,0) 70%);
+  }
+  .dark .bg::after{
+    background:radial-gradient(circle 160px at 0% 100%,#4DB06BE8 0%,rgba(176,107,232,0) 70%),radial-gradient(circle 120px at 50% 50%,#592E7CF6 0%,rgba(46,124,246,0) 70%);
+  }
+
+  /* ---------- content layer ---------- */
+  .content{position:relative;z-index:1;display:flex;flex-direction:column;height:100%}
+
+  /* toolbar — glass_chrome */
+  .toolbar{
+    height:56px;display:flex;align-items:center;padding:0 20px;
+    font-size:19px;font-weight:600;letter-spacing:-.01em;
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  }
+  .light .toolbar{background:rgba(253,251,255,.97);color:#1A1B1F}
+  .dark  .toolbar{background:rgba(10,12,18,.97);color:#E3E2E6}
+
+  .scroll{flex:1;overflow:hidden;padding:14px 14px 0;display:flex;flex-direction:column;gap:11px}
+
+  /* ---------- the glass card ---------- */
+  .card{
+    border-radius:24px;padding:15px 16px;border:1px solid;
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  }
+  .light .card{background:rgba(255,255,255,.72);border-color:rgba(255,255,255,.60);color:#1A1B1F}
+  .dark  .card{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.14);color:#E3E2E6}
+
+  .light .card.hero{background:rgba(214,227,255,.77);border-color:rgba(46,124,246,.55)}
+  .dark  .card.hero{background:rgba(59,91,168,.18);border-color:rgba(46,124,246,.65)}
+
+  .lbl{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;opacity:.62}
+  .val{font-size:26px;font-weight:600;letter-spacing:-.02em;margin-top:2px}
+  .title{font-size:16px;font-weight:600;letter-spacing:-.01em}
+  .body{font-size:13px;line-height:1.45;opacity:.75;margin-top:3px}
+  .small{font-size:11px;opacity:.6;margin-top:4px}
+
+  .row{display:flex;gap:11px}
+  .row>*{flex:1;min-width:0}
+
+  .btns{display:flex;gap:8px;margin-top:13px;align-items:center}
+  .btn{
+    font-size:13px;font-weight:600;padding:9px 16px;border-radius:999px;
+    border:none;cursor:default;letter-spacing:.01em;
+  }
+  .light .btn.p{background:#1565C0;color:#fff}
+  .dark  .btn.p{background:#A9C7FF;color:#002F65}
+  .btn.t{background:transparent}
+  .light .btn.t{color:#1565C0}
+  .dark  .btn.t{color:#A9C7FF}
+
+  .pill{
+    display:inline-block;font-size:10px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;padding:3px 9px;border-radius:999px;
+  }
+  .light .pill{background:rgba(46,124,246,.14);color:#1565C0}
+  .dark  .pill{background:rgba(169,199,255,.18);color:#A9C7FF}
+
+  /* ---------- bottom nav — glass_chrome ---------- */
+  .nav{
+    height:64px;display:flex;align-items:center;justify-content:space-around;
+    backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border-top:1px solid;
+  }
+  .light .nav{background:rgba(253,251,255,.97);border-color:rgba(0,0,0,.06)}
+  .dark  .nav{background:rgba(10,12,18,.97);border-color:rgba(255,255,255,.07)}
+  .nav div{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;font-weight:600}
+  .light .nav div{color:#44474F}
+  .dark  .nav div{color:#C4C6D0}
+  .light .nav div.on{color:#1565C0}
+  .dark  .nav div.on{color:#A9C7FF}
+  .dot{width:19px;height:19px;border-radius:5px;background:currentColor;opacity:.85}
+
+  .note{
+    max-width:660px;font-size:12.5px;line-height:1.7;color:#c3c7cb;
+    background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.09);
+    border-radius:14px;padding:16px 18px;
+  }
+  .note b{color:#fff;font-weight:600}
+  .note code{background:rgba(255,255,255,.09);padding:1px 6px;border-radius:5px;font-size:11.5px}
+</style>
+</head>
+<body>
+
+  <h1>AlphaRoute — glassmorphism</h1>
+  <p class="sub">
+    The intended look, drawn with the app's real colour values. Left is light, right is dark.
+    The gradient is the window background; every card is a translucent pane over it with a 1&nbsp;dp rim.
+  </p>
+
+  <div class="stage">
+
+    <!-- ================= LIGHT ================= -->
+    <div class="col">
+      <div class="phone light">
+        <div class="bg"></div>
+        <div class="content">
+
+          <div class="toolbar">Dashboard</div>
+
+          <div class="scroll">
+
+            <div class="card hero">
+              <div class="lbl">Next stop</div>
+              <div class="title" style="margin-top:4px">R-04 — Alfamart Sampaloc</div>
+              <div class="body">1.1 km away · closest to drive to</div>
+              <div class="small">Straight-line distance, not a driving route.</div>
+              <div class="btns">
+                <button class="btn p">Navigate</button>
+                <button class="btn t">Choose another</button>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="card"><div class="lbl">Round</div><div class="val">2</div></div>
+              <div class="card"><div class="lbl">Rounds finished</div><div class="val">1</div></div>
+            </div>
+
+            <div class="row">
+              <div class="card"><div class="lbl">Completed today</div><div class="val">4</div></div>
+              <div class="card"><div class="lbl">Remaining this round</div><div class="val">3</div></div>
+            </div>
+
+            <div class="card">
+              <div class="lbl">Round completion</div>
+              <div class="val">70.0%</div>
+            </div>
+
+            <div class="card">
+              <div class="lbl">Overall completed (all rounds)</div>
+              <div class="val">17</div>
+            </div>
+
+          </div>
+
+          <div class="nav">
+            <div class="on"><span class="dot"></span>Dashboard</div>
+            <div><span class="dot"></span>Map</div>
+            <div><span class="dot"></span>History</div>
+            <div><span class="dot"></span>Settings</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="cap">Light</div>
+    </div>
+
+    <!-- ================= DARK ================= -->
+    <div class="col">
+      <div class="phone dark">
+        <div class="bg"></div>
+        <div class="content">
+
+          <div class="toolbar">Dashboard</div>
+
+          <div class="scroll">
+
+            <div class="card hero">
+              <div class="lbl">Next stop</div>
+              <div class="title" style="margin-top:4px">R-04 — Alfamart Sampaloc</div>
+              <div class="body">1.1 km away · closest to drive to</div>
+              <div class="small">Straight-line distance, not a driving route.</div>
+              <div class="btns">
+                <button class="btn p">Navigate</button>
+                <button class="btn t">Choose another</button>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="card"><div class="lbl">Round</div><div class="val">2</div></div>
+              <div class="card"><div class="lbl">Rounds finished</div><div class="val">1</div></div>
+            </div>
+
+            <div class="row">
+              <div class="card"><div class="lbl">Completed today</div><div class="val">4</div></div>
+              <div class="card"><div class="lbl">Remaining this round</div><div class="val">3</div></div>
+            </div>
+
+            <div class="card">
+              <div class="lbl">Round completion</div>
+              <div class="val">70.0%</div>
+            </div>
+
+            <div class="card">
+              <div class="lbl">Overall completed (all rounds)</div>
+              <div class="val">17</div>
+            </div>
+
+          </div>
+
+          <div class="nav">
+            <div class="on"><span class="dot"></span>Dashboard</div>
+            <div><span class="dot"></span>Map</div>
+            <div><span class="dot"></span>History</div>
+            <div><span class="dot"></span>Settings</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="cap">Dark</div>
+    </div>
+
+    <!-- ================= ROUND REPORT ================= -->
+    <div class="col">
+      <div class="phone light">
+        <div class="bg"></div>
+        <div class="content">
+
+          <div class="toolbar">Rounds</div>
+
+          <div class="scroll">
+
+            <div class="card">
+              <div class="title">Round 3</div>
+              <div class="val" style="font-size:22px;margin-top:2px">12 stores · 2 days</div>
+              <div class="small" style="margin-top:2px">25 Sep 2026 – 27 Sep 2026</div>
+
+              <div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+                <div>
+                  <div class="body" style="opacity:.9;margin:0">Day 1 · 25 Sep — 8 stores</div>
+                </div>
+                <div>
+                  <div class="body" style="opacity:.9;margin:0">Day 2 · 27 Sep — 4 stores</div>
+                  <div class="small" style="margin-top:3px">R-02, R-05, R-09, R-11</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="title">Round 2</div>
+              <div class="val" style="font-size:22px;margin-top:2px">65 stores · 4 days</div>
+              <div class="small" style="margin-top:2px">1 Sep 2026 – 4 Sep 2026</div>
+
+              <div style="margin-top:10px;display:flex;flex-direction:column;gap:9px">
+                <div><div class="body" style="opacity:.9;margin:0">Day 1 · 1 Sep — 23 stores</div></div>
+                <div><div class="body" style="opacity:.9;margin:0">Day 2 · 2 Sep — 18 stores</div></div>
+                <div><div class="body" style="opacity:.9;margin:0">Day 3 · 3 Sep — 15 stores</div></div>
+                <div><div class="body" style="opacity:.9;margin:0">Day 4 · 4 Sep — 9 stores</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="nav">
+            <div><span class="dot"></span>Dashboard</div>
+            <div><span class="dot"></span>Map</div>
+            <div class="on"><span class="dot"></span>History</div>
+            <div><span class="dot"></span>Settings</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="cap">Round report</div>
+    </div>
+
+  </div>
+
+  <div class="note">
+    <b>What actually changed in the app.</b><br>
+    The gradient is <code>android:windowBackground</code>, so every screen gets it with no per-layout work
+    and there is no flash of a flat colour at launch. Every screen root is now
+    <code>@android:color/transparent</code> — that is what lets the cards be translucent. Cards gained a
+    20&nbsp;dp radius, a translucent fill and a 1&nbsp;dp lighter rim (<code>glass_stroke</code>); elevation
+    went to 0 because a hard drop shadow under frosted glass looks wrong. The toolbar, the bottom bar, the
+    five bottom sheets and the dialogs all use the same treatment, with the sheets rounded at the top only.
+    <br><br>
+    <b>Second pass — what was weak and what changed.</b>
+    <br>
+    <b>The gradient was too pale.</b> The original three stops were all within a few points of white, so
+    there was almost nothing to see through a translucent card — and a pane you cannot see through is a
+    flat panel with a faint tint. The stops are now genuinely coloured and the blobs went from 20% to 30%
+    alpha.
+    <br>
+    <b>A third blob, centred.</b> With only two corner blobs the middle of a tall screen had no colour in
+    it, so a card scrolled to the middle had nothing behind it to refract — exactly the moment the glass
+    stopped looking like glass.
+    <br>
+    <b>The bars are now 97% opaque, and the edge fades are gone.</b> They looked good in this mockup and
+    were a real bug on the device: content scrolls UNDER those bars, and at 85% the scrolled text stayed
+    legible through them and collided with the toolbar title — two layers of text over each other. An app
+    bar is not a card: a card has only the gradient behind it, a bar has the whole scrolling app.
+    <br>
+    <b>Corner radius 20dp → 24dp</b>, and <b>the suggestion card now carries a coloured rim</b>, which is
+    what separates "the answer" from the seven figures around it.
+    <br><br>
+    <b>Not shown here:</b> the map and the route screen. They use the same gradient, the
+    same card style and the same chrome — this is the design system, not a screenshot of the build.
+    A real Android render still has to be checked on your phone.
+    <br><br>
+    <b>Phase 12 — the round report</b> (third panel). Reached from the History tab, which now carries a
+    header card showing the round in progress at a glance. Each round card answers the question the day
+    list could not: <b>65 stores · 4 days</b>, broken into <b>Day 1 · 1 Sep — 23 stores</b> and so on.
+    Tapping a day row reveals the store codes done that day. Rounds come back newest first; days come back
+    oldest first, because that is the order they happened in.
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Daily History - one day's completions, in the order they were completed (Phase 6.3).
+
+  The header names the day and its total, so the screen says what it is showing before the list starts.
+  The list is a RecyclerView because a day's length is not known in advance.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    tools:context=".ui.history.DailyHistoryFragment">
+
+    <TextView
+        android:id="@+id/tv_daily_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle"
+        tools:text="25 Sep 2026 · 3 stores" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/daily_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/daily_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingStart="16dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="16dp"
+            tools:listitem="@layout/item_history_row" />
+
+        <!--
+          Only reachable when this day's rows were removed after the list was shown. It offers a back
+          action in words rather than a button, because the back gesture and the toolbar's up arrow are
+          both already there.
+        -->
+        <TextView
+            android:id="@+id/tv_daily_empty"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:padding="32dp"
+            android:text="@string/daily_history_empty"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </FrameLayout>
+
+</LinearLayout>

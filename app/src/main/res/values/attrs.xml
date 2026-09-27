@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Custom attributes for AlphaRoute views.
+
+  StatCardView - the dashboard progress card. Label and value can both be set in XML (as they are in
+  fragment_dashboard.xml for Phase 1.3) or from Java (as Phase 6.1 will, once the figures come from
+  Room instead of from strings.xml).
+-->
+<resources>
+
+    <declare-styleable name="StatCardView">
+        <attr name="statLabel" format="string" />
+        <attr name="statValue" format="string" />
+    </declare-styleable>
+
+</resources>

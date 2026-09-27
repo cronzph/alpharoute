@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  History - one card per day, newest first (Phase 6.2). Screen 10 of the Phase 0.3 screen plan.
+
+  A RecyclerView rather than a static list, because the number of days grows without limit - unlike the
+  Dashboard's seven fixed cards.
+
+  Three children in a FrameLayout, only one of which is visible at a time: the list, the loading bar, and
+  the empty message. They overlap deliberately, so the message is centred in the screen rather than pushed
+  around by whatever else happens to be on it.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:orientation="vertical"
+    tools:context=".ui.history.HistoryFragment">
+
+    <!--
+      The way into the round report (Phase 12).
+
+      Above the day list because it answers the bigger question. This tab says what happened on a day; a
+      round is a pass over every store and can take several, so "65 stores in 4 days" is not visible
+      anywhere in the day list below.
+
+      A card rather than a button: it is an invitation to another view, not an action, and a filled button
+      at the top of a list would read as the primary thing to do on this screen.
+    -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/card_history_rounds"
+        style="@style/Widget.AlphaRoute.StatCard"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        android:focusable="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/history_action_rounds"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle" />
+
+            <!--
+              The round in progress, at a glance: "65 stores · 4 days". Filled in by HistoryFragment from the
+              same history this tab already observes, so the answer is on the screen the user is already on
+              rather than one tap away.
+            -->
+            <TextView
+                android:id="@+id/tv_history_round_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.CardValue"
+                tools:text="65 stores · 4 days" />
+
+            <TextView
+                android:id="@+id/tv_history_round_hint"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/history_rounds_hint"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+        </LinearLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/history_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp"
+        tools:listitem="@layout/item_history_date_group" />
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/history_loading"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:indeterminate="true" />
+
+    <!--
+      The empty state. No action button, deliberately: the bottom navigation is already on screen, and a
+      button that did the same thing as a tab would be a second way to do one thing.
+    -->
+    <TextView
+        android:id="@+id/tv_history_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:padding="32dp"
+        android:gravity="center"
+        android:text="@string/history_empty"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,845 @@
+<resources>
+    <string name="app_name">Alfamart Route Tracker</string>
+    <string name="app_tagline">Track store visits, one route at a time</string>
+    <string name="app_version_format">Version %1$s</string>
+
+    <!-- Bottom navigation and toolbar titles -->
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_map">Map</string>
+    <string name="title_history">History</string>
+    <string name="title_settings">Settings</string>
+
+    <!--
+      Pushed screens, which are steps rather than tabs. Their titles are set by MainActivity while they are
+      open - see MainActivity.titleFor. Home Setup's title is defined with the Settings strings, where the
+      screen it belongs to lives.
+    -->
+    <string name="title_daily_history">Day history</string>
+    <string name="title_completion_detail">Completion</string>
+
+    <!--
+      The last placeholder is gone. Phase 6.2 built the real History screen, so placeholder_history was
+      DELETED here rather than left unused - an unused placeholder is an invitation to use it again.
+    -->
+
+    <!--
+      Map screen (Phase 3.1, extended in 3.2).
+      The OpenStreetMap attribution itself is deliberately NOT here - it lives in MapConfig beside the
+      tile source it describes, because the two must match. See MapConfig.attribution().
+    -->
+    <string name="map_offline_notice">Map tiles unavailable — check your connection. Your saved stores are not affected.</string>
+
+    <!-- Map banner actions -->
+    <string name="map_action_allow_location">Allow location</string>
+    <string name="map_action_open_settings">Open app settings</string>
+    <string name="map_action_open_location_settings">Turn on location</string>
+    <string name="map_action_retry">Retry</string>
+
+    <!-- Location permission (Phase 3.2) -->
+    <string name="map_permission_explanation">Alfamart Route Tracker needs your location to show where you are on the map and to confirm when you reach a store. Your location stays on this device.</string>
+    <string name="map_permission_denied_permanently">Location is blocked for this app. Open the app settings and choose Permissions → Location → Allow.</string>
+    <string name="map_permission_approximate">You allowed approximate location only, so the blue dot can be off by a kilometre. Choose Precise in app settings for accurate store arrival.</string>
+
+    <!-- Location state (Phase 3.2) -->
+    <string name="map_gps_disabled">Location services are switched off. Turn them on to see your position.</string>
+    <string name="map_waiting_for_fix">Waiting for GPS…</string>
+    <string name="map_location_accuracy_format">Accurate to about %1$d m</string>
+
+    <!-- Map controls (Phase 3.2) -->
+    <string name="map_action_my_location">My location</string>
+
+    <!-- Add / Edit Store form (Phase 3.3) -->
+    <string name="store_form_title_add">Add store</string>
+    <string name="store_form_title_edit">Edit store</string>
+    <string name="store_field_route_number">Route number</string>
+    <string name="store_field_store_code">Store code</string>
+    <string name="store_field_store_name">Store name</string>
+    <string name="store_field_area">Area</string>
+    <string name="store_action_save">Save</string>
+    <string name="store_action_cancel">Cancel</string>
+    <string name="store_form_coordinates_format">Pinned at %1$.6f, %2$.6f</string>
+
+    <!--
+      Field validation messages.
+
+      The first two are format strings rather than one message per field: the rule is the same
+      ("required", "too long") and only the field name changes, so the field names below are reused.
+      This is also why StoreValidator reports error CODES rather than text - the wording lives here.
+    -->
+    <string name="store_error_required_format">%1$s is required</string>
+    <string name="store_error_too_long_format">%1$s is too long</string>
+    <string name="store_error_coordinates_invalid">These map coordinates are not valid</string>
+    <string name="store_error_code_taken">That store code is already used by another store</string>
+    <string name="store_error_route_number_taken">That route number is already used by another store</string>
+    <string name="store_error_save_failed">Could not save the store. Nothing was changed.</string>
+
+    <!--
+      Store Details sheet (Phase 3.5).
+
+      The field LABELS are deliberately not repeated here: the Add / Edit form already owns
+      store_field_route_number, store_field_store_code, store_field_store_name and store_field_area, and
+      a field should have one name in the app rather than two that can drift apart. Only the labels that
+      belong to this sheet alone are defined below.
+    -->
+    <string name="store_detail_title">Store details</string>
+    <string name="store_detail_label_coordinates">Coordinates</string>
+    <string name="store_detail_section_completion">Completion</string>
+    <string name="store_detail_label_date">Date</string>
+    <string name="store_detail_label_time">Time</string>
+    <string name="store_detail_label_daily_order">Daily order</string>
+    <!--
+      Six decimal places is about 11 cm - finer than any GPS reading, and enough to check a value against
+      another map app without rounding getting in the way. Shared by the Store Details sheet, the Home
+      Setup readout and the Settings Home row, so one coordinate cannot be shown in two different shapes.
+    -->
+    <string name="coordinates_format">%1$.6f, %2$.6f</string>
+    <string name="store_detail_daily_order_format">#%1$d</string>
+    <string name="store_detail_loading">Loading this store…</string>
+    <string name="store_detail_action_close">Close</string>
+
+    <!--
+      "That store no longer exists." is reached from two screens - the Store Details sheet and the
+      Add / Edit form - so it is named for the situation rather than for one of them. Both arrive here
+      the same way: the user acted on a store that had been deleted in the meantime.
+    -->
+    <string name="store_missing">That store no longer exists.</string>
+
+    <!-- Edit and delete (Phase 3.6) -->
+    <string name="store_action_edit">Edit</string>
+    <string name="store_action_delete">Delete</string>
+    <string name="store_edit_updated">Store updated.</string>
+    <string name="store_delete_confirm_title">Delete this store?</string>
+
+    <!-- A store with nothing recorded against it: the simple case. -->
+    <string name="store_delete_confirm_message">%1$s will be removed from the map. This cannot be undone.</string>
+
+    <!--
+      Version 13: a completed store CAN now be deleted, and its completion records go with it.
+
+      The number is in the message on purpose. Deleting a completed store also removes its history - which
+      changes the Dashboard's lifetime count and takes those days out of the History tab. Asking permission
+      for the store while quietly removing the records as well would not be a confirmation.
+    -->
+    <string name="store_delete_confirm_with_history">%1$s will be removed from the map, and %2$s recorded against it will be deleted too. This cannot be undone.</string>
+
+    <!-- The count could not be read. Warning vaguely is better than not warning. -->
+    <string name="store_delete_confirm_with_history_unknown">%1$s will be removed from the map, and any completion records for it will be deleted too. This cannot be undone.</string>
+
+    <plurals name="store_delete_history_count">
+        <item quantity="one">%d completion record</item>
+        <item quantity="other">%d completion records</item>
+    </plurals>
+
+    <!--
+      The line under the Delete button, shown when the store has history.
+
+      It sits there so the warning is visible BEFORE the button is pressed, not only in the dialog that
+      follows. The dialog gives the exact number; this says what kind of thing is at stake.
+    -->
+    <string name="store_delete_note_with_history">This store has completion records. Deleting it will delete them too.</string>
+
+    <string name="store_delete_done">Store deleted.</string>
+    <string name="store_delete_failed">Could not delete the store. Nothing was changed.</string>
+
+    <!--
+      Home and Settings (Phase 3.7).
+      Home is the permanent final destination: never a store, never in a count, always drawn with its own
+      house pin.
+    -->
+    <string name="title_home_setup">Home</string>
+    <string name="marker_home_title">Home</string>
+    <string name="home_setup_caption">Home is where your route finishes. It is not counted as a store.</string>
+    <string name="home_setup_instruction">Tap the map to choose Home, or use your current location.</string>
+    <string name="home_setup_not_chosen">No point chosen yet</string>
+    <string name="home_setup_locating">Locating…</string>
+    <string name="home_setup_action_use_location">Use current location</string>
+    <string name="home_setup_action_grant_permission">Grant permission</string>
+    <string name="home_setup_action_confirm">Confirm home location</string>
+    <string name="home_setup_action_back">Back</string>
+    <string name="home_setup_no_fix">Could not get your location. You can still select Home on the map.</string>
+    <string name="home_setup_saved">Home saved.</string>
+    <string name="home_setup_save_failed">Could not save Home. Try again.</string>
+
+    <string name="settings_section_home">Home</string>
+    <string name="settings_home_not_set">Home not set</string>
+    <string name="settings_home_caption">Home is where your route finishes. It is never counted as a store.</string>
+    <string name="settings_action_set_home">Set home location</string>
+    <string name="settings_action_change_home">Change home location</string>
+    <string name="settings_section_radius">Arrival radius</string>
+    <string name="settings_radius_hint">Arrival radius (metres)</string>
+    <string name="settings_radius_caption">How close you must be for the app to offer to complete a store. Exact coordinate equality is never required, because GPS readings vary.</string>
+
+    <!--
+      The bounds are substituted from GeoConstants rather than typed into the sentence, so the message
+      cannot end up telling the user a range the validator does not actually accept.
+    -->
+    <string name="settings_radius_invalid_format">Enter a distance in metres between %1$d and %2$d</string>
+    <string name="settings_action_save_radius">Save</string>
+    <string name="settings_saved">Settings saved.</string>
+    <string name="settings_save_failed">Could not save settings.</string>
+    <string name="settings_section_about">About</string>
+
+    <!--
+      Route Preview (Phase 4.2).
+
+      The messages here are the screen plan's error states (§13.8), word for word where it gave them. The
+      one it could not have known about is route_preview_not_configured: the routing key is a build-time
+      setting, and a checkout without one has to say so rather than send a request that comes back 401.
+
+      The attribution itself is NOT here - it lives in RoutingConfig beside the service URL it describes,
+      for the same reason the OpenStreetMap attribution lives in MapConfig. It is provider metadata, and
+      it is a licence condition rather than a label.
+    -->
+    <string name="route_preview_title">Route preview</string>
+    <string name="route_preview_label_store">Store</string>
+    <string name="route_preview_label_distance">Distance</string>
+    <string name="route_preview_label_duration">Estimated time</string>
+
+    <!-- Used for both summary lines: "R-01 · 123456" and "Name · Area". One format, two fields. -->
+    <string name="store_summary_pair_format">%1$s · %2$s</string>
+    <string name="route_preview_source_format">Route from %1$s — it may differ from Google Maps.</string>
+
+    <string name="route_preview_action_start">Start navigation</string>
+    <string name="route_preview_loading">Calculating route…</string>
+    <string name="route_preview_no_location">Waiting for your location before routing.</string>
+    <string name="route_preview_not_configured">Routing is not set up in this build.</string>
+    <string name="route_preview_offline">Routing unavailable — check your connection.</string>
+    <string name="route_preview_quota">Daily routing limit reached. Try again tomorrow.</string>
+    <string name="route_preview_failed">Could not calculate a route. Try again.</string>
+    <string name="route_preview_no_navigation_app">No navigation app found. Install Google Maps or Waze.</string>
+
+    <!-- The primary action on the Store Details sheet, opening the Route Preview. -->
+    <string name="store_action_get_directions">Get directions</string>
+
+    <!--
+      Add from a link (Phase 3.8).
+
+      The messages here are careful about one thing: a link that cannot be read must send the user back to
+      Google Maps for a better one, not leave them guessing. And none of them ever suggests that a location
+      was guessed at, because it never is.
+    -->
+    <string name="place_link_title">Add from a link</string>
+    <string name="place_link_caption">Paste a Google Maps link, or the coordinates, and the store will be pinned exactly where Google Maps has it.</string>
+    <string name="place_link_field_hint">Google Maps link or coordinates</string>
+    <string name="place_link_action_paste">Paste</string>
+    <string name="place_link_action_continue">Continue</string>
+    <string name="place_link_resolving">Reading the link…</string>
+    <string name="place_link_found_format">Found: %1$s</string>
+    <string name="place_link_nothing_pasted">Copy a link in Google Maps first, or type the coordinates.</string>
+    <string name="place_link_not_a_link">That is not a Google Maps link. Paste a link, or coordinates like 14.5995, 120.9842.</string>
+    <string name="place_link_unresolved">Could not read that link. Try pasting the full link, or the coordinates.</string>
+    <string name="place_link_offline">Could not reach Google Maps. Check your connection and try again.</string>
+    <string name="place_link_failed">Could not read that link. Try again.</string>
+    <string name="map_action_add_from_link">Add a store from a link</string>
+
+    <!--
+      Active navigation (Phase 4.3). Screen 8 of the Phase 0.3 screen plan.
+
+      The wording here is doing deliberate work. Nothing in these strings says the app is guiding the
+      drive, because it is not - Google Maps is (D-6/D-7). The sheet says "Google Maps is guiding you" so
+      the driver never expects turn-by-turn from this app and is not surprised when the guidance is in
+      another window.
+
+      "Straight-line distance" appears on the sheet for the same reason: the number shown is the distance
+      as the crow flies, not the driving distance, and a driver who assumed otherwise would think the app
+      was broken.
+    -->
+    <string name="nav_sheet_title">Navigating</string>
+    <string name="nav_sheet_store_format">Navigating to %1$s</string>
+    <string name="nav_sheet_label_remaining">Distance remaining</string>
+    <string name="nav_sheet_distance_note">Straight-line distance to the store.</string>
+    <string name="nav_sheet_standby">Waiting for your location…</string>
+    <string name="nav_sheet_outside">Outside arrival radius</string>
+    <string name="nav_sheet_approaching">Nearly there — outside arrival radius</string>
+    <string name="nav_sheet_arrived">Inside arrival radius — confirm when you arrive</string>
+    <string name="nav_sheet_no_fix">Location unavailable — arrival cannot be detected.</string>
+    <string name="nav_sheet_guidance_note">Turn-by-turn directions, live traffic and road rules are handled by Google Maps.</string>
+    <string name="nav_action_open_maps">Open Google Maps</string>
+    <string name="nav_action_end">End navigation</string>
+    <string name="nav_no_navigation_app">No navigation app found. Install Google Maps or Waze.</string>
+
+    <!--
+      The compact bar on the Map tab, shown while a session is running. It is the way back to screen 8
+      after the sheet has been closed, and it must not cover the OpenStreetMap attribution.
+    -->
+    <string name="nav_bar_title_format">Navigating to %1$s</string>
+    <string name="nav_bar_action_open">Show</string>
+    <string name="map_action_navigation_bar">Active navigation</string>
+
+    <!--
+      The two notifications. The ongoing one is the foreground service's required visible evidence; the
+      arrival one is a normal, dismissible alert.
+    -->
+    <string name="nav_channel_name">Navigation</string>
+    <string name="nav_channel_description">Shows the active destination and warns you when you reach it.</string>
+    <string name="nav_notification_title">Navigating to your store</string>
+    <string name="nav_notification_starting">Starting…</string>
+    <string name="nav_notification_waiting">Waiting for your location…</string>
+    <string name="nav_notification_distance_format">%1$s away</string>
+    <string name="nav_notification_arrived">You have arrived</string>
+    <string name="nav_arrival_title">You have arrived</string>
+    <string name="nav_arrival_message">You are at %1$s. Open the app to confirm.</string>
+
+    <!--
+      State recovery (Phase 4.4).
+
+      Two situations where a drive was interrupted rather than finished, and the app has to say which one.
+      The distinction matters: "monitoring stopped" is recoverable with a tap, and "location access stopped"
+      is not - it needs a permission the user has to grant in system settings.
+    -->
+    <string name="nav_resume_title">Resume navigation?</string>
+    <string name="nav_resume_message">You were navigating to %1$s. Arrival monitoring stopped.</string>
+    <string name="nav_resume_action">Resume</string>
+    <string name="nav_resume_discard">Discard</string>
+    <string name="nav_resume_failed">That store is no longer available.</string>
+
+    <!--
+      The two mid-drive failures. Both are shown on the Navigation Active sheet, replacing the distance,
+      because a distance without a position behind it is a number the app cannot stand behind.
+    -->
+    <string name="nav_location_lost">Location access stopped — arrival cannot be detected.</string>
+    <string name="nav_location_lost_action">Grant permission</string>
+    <string name="nav_monitoring_stopped">Arrival monitoring stopped.</string>
+    <string name="nav_monitoring_stopped_action">Resume monitoring</string>
+
+    <!--
+      Completion confirmation (Phase 5.2/5.3). Screen 9.
+
+      This is the only dialog in the app that changes a count, so the wording is careful in three ways:
+
+        - the question is the whole title, so there is no way to tap YES without having read it;
+        - the store is repeated in full, because a confirmation that does not say what it is about to
+          record is not a confirmation;
+        - "Already counted" is phrased as information, not an error. It is the duplicate guard doing its
+          job, and the user did nothing wrong.
+    -->
+    <string name="completion_dialog_title">Store completed?</string>
+    <string name="completion_store_format">%1$s — %2$s</string>
+    <string name="completion_distance_format">Arrival detected at %1$s</string>
+    <string name="completion_action_no">NO</string>
+    <string name="completion_action_yes">YES</string>
+    <string name="completion_result_success_format">Completed — store #%1$d today</string>
+    <string name="completion_result_already">Already counted</string>
+    <string name="completion_result_store_missing">That store no longer exists.</string>
+    <string name="completion_result_failed">Could not save the completion. Nothing was changed. Try again.</string>
+    <string name="completion_action_confirm">Store completed?</string>
+
+    <!--
+      Store status. The chip's text is what carries the meaning - the colour only reinforces it, because
+      orange and green are the classic red/green-confusion pair.
+    -->
+    <string name="store_status_pending">Pending</string>
+    <string name="store_status_completed">Completed</string>
+
+    <!--
+      ============================================================================
+      DASHBOARD - live since Phase 6.1, round-aware since Version 7.
+
+      Two of these cards changed MEANING when rounds arrived, and the labels were changed with them:
+
+        Remaining   was "total minus every completion ever"  →  now "left in THIS round"
+        Completion  was "lifetime percentage"                →  now "how much of THIS round is done"
+
+      The reason is the one thing a lifetime figure cannot do: go back up. Starting a new round must show
+      a full route again, and a lifetime percentage would sit at 100% forever.
+      ============================================================================
+    -->
+    <string name="dashboard_label_round">Round</string>
+    <string name="dashboard_label_rounds_finished">Rounds finished</string>
+    <string name="dashboard_label_today">Completed today</string>
+    <string name="dashboard_label_yesterday">Completed yesterday</string>
+    <string name="dashboard_label_overall">Overall completed (all rounds)</string>
+    <string name="dashboard_label_remaining">Remaining this round</string>
+    <string name="dashboard_label_total">Total stores</string>
+    <string name="dashboard_label_percentage">Round completion</string>
+    <string name="dashboard_label_latest">Latest completed</string>
+
+    <!-- Store code and completion time, for the "Latest completed" card. -->
+    <string name="dashboard_latest_format">%1$s · %2$s</string>
+
+    <!--
+      The empty state, shown only when the database holds no store at all. It names the Map tab and the
+      long-press, because that is the only way to add the first store and nothing else on this screen says
+      so. No button: the bottom navigation is already on screen.
+    -->
+    <string name="dashboard_empty_no_stores">No stores yet. Open the Map tab and long-press the map to add your first store.</string>
+
+    <!--
+      Shown only when every store has been completed in the round in progress. It names Settings because
+      that is where the next round begins - a finished round with no message is a dead end.
+    -->
+    <string name="dashboard_round_complete">This round is complete — every store has been visited. Open Settings to start the next round.</string>
+
+    <!--
+      ============================================================================
+      HISTORY - Phase 6.2 and 6.3. Screens 10 and 11.
+
+      Every figure here is derived from the completion_history rows. Nothing is stored as a daily total,
+      because a stored total can drift from the rows it claims to summarise.
+      ============================================================================
+    -->
+
+    <!-- One date group: the day, then how many were completed. e.g. "25 Sep 2026 · 3 stores" -->
+    <string name="history_day_format">%1$s · %2$s</string>
+
+    <!--
+      A plural rather than "%d stores", because one store completed on a day is an ordinary case and
+      "1 stores" would look like a bug.
+    -->
+    <plurals name="history_day_count">
+        <item quantity="one">%d store</item>
+        <item quantity="other">%d stores</item>
+    </plurals>
+
+    <!--
+      No action button, deliberately: the bottom navigation is already on screen, and a button that did
+      the same thing as a tab would be a second way to do one thing.
+    -->
+    <string name="history_empty">No completions yet. Completed stores will appear here.</string>
+
+    <!-- The "#1" leads, because the order of completion is the point of the Daily History screen. -->
+    <string name="daily_row_identifiers_format">#%1$d  %2$s — %3$s</string>
+    <string name="daily_row_area_time_format">%1$s · %2$s</string>
+
+    <string name="daily_history_empty">Nothing recorded for this day.</string>
+
+    <!--
+      ============================================================================
+      COMPLETION DETAIL - Phase 6.4. Screen 11b.
+      ============================================================================
+    -->
+    <string name="detail_label_completion">Completed</string>
+
+    <!-- "Store #3 completed that day" - a position, not an id, which is why it is not "#3" alone. -->
+    <string name="detail_sequence_format">Store #%1$d completed that day</string>
+
+    <!--
+      The same, with the round in front. Since Version 7 a store has one record per pass, so a date and a
+      time alone would not say which pass the record belongs to.
+    -->
+    <string name="detail_round_sequence_format">Round %1$d · store #%2$d that day</string>
+
+    <string name="detail_action_view_on_map">View on Map</string>
+
+    <!--
+      The inconsistency case. AD-6 makes a missing store impossible while history exists, so if this is on
+      screen something is genuinely wrong - and the screen says so rather than offering a fix it cannot
+      make. Phase 6.5's checker is what reports the detail.
+    -->
+    <string name="detail_store_missing_title">Store record missing</string>
+    <string name="detail_store_missing">This store record is missing, but its completion history still exists. Run the consistency check in Settings to see what was found.</string>
+
+    <!--
+      ============================================================================
+      THE CONSISTENCY CHECK - Phase 6.5.
+
+      A maintenance tool, not a setting, and it lives on the Settings screen because that is where facts
+      about the app's own data belong. It REPORTS and never repairs: a checker that fixes what it finds can
+      also destroy what it does not understand, and deleting an orphaned history row would erase the only
+      evidence that a completion happened.
+      ============================================================================
+    -->
+    <string name="settings_section_consistency">Consistency check</string>
+    <string name="settings_consistency_explanation">Compares your stores with your completion history. It only reports what it finds — it never changes or deletes anything.</string>
+    <string name="settings_consistency_action">Run check</string>
+    <string name="settings_consistency_clean">Everything agrees. No problems found.</string>
+
+    <plurals name="settings_consistency_issues">
+        <item quantity="one">%d issue found:</item>
+        <item quantity="other">%d issues found:</item>
+    </plurals>
+
+    <!--
+      The four faults, in plain language. Each says what is wrong in terms of what the user would SEE,
+      not in terms of the tables involved - "the map would show it green but it is not counted" is
+      actionable; "COMPLETED_WITHOUT_HISTORY" is not.
+    -->
+    <string name="settings_consistency_completed_without_history">Marked completed but not counted</string>
+    <string name="settings_consistency_history_without_completion">Counted but still shown as pending</string>
+    <string name="settings_consistency_orphaned_history">Completion with no matching store</string>
+    <string name="settings_consistency_marker_mismatch">Map marker count differs from the store count</string>
+
+    <!--
+      ============================================================================
+      ROUNDS AND UNDO - Version 7.
+
+      One round is one complete pass of every store. A store is completed once per round; starting a new
+      round puts every store back to PENDING so the map shows what is still to visit, and every completion
+      from the finished round stays in the History.
+      ============================================================================
+    -->
+
+    <string name="settings_section_round">Round</string>
+    <string name="settings_round_current_format">Round %1$d in progress</string>
+    <string name="settings_round_progress_format">%1$d of %2$d stores visited</string>
+    <string name="settings_round_finished_format">%1$d round(s) finished</string>
+    <string name="settings_round_action">Start next round</string>
+
+    <!-- Shown instead of the button's effect when the round is not finished, so the user is told what is missing. -->
+    <string name="settings_round_incomplete_format">%1$d store(s) still to visit. A round can only be finished when every store has been visited.</string>
+    <string name="settings_round_no_stores">Add a store first — a round is a pass over your stores.</string>
+    <!--
+      Shown in place of "%1$d of %2$d stores visited" when there is not a single store. "0 of 0 stores
+      visited" is true but reads like a broken counter; the point is that there is nothing to count yet.
+    -->
+    <string name="settings_round_no_stores_yet">No stores yet</string>
+
+    <string name="settings_round_confirm_title">Start the next round?</string>
+    <string name="settings_round_confirm_message">Every store goes back to pending so you can visit them again. Your completion history is not deleted — past rounds stay in the History tab.</string>
+    <string name="settings_round_confirm_action">Start round</string>
+    <string name="settings_round_cancel">Cancel</string>
+
+    <string name="settings_round_started_format">Round %1$d started. %2$d stores are pending again.</string>
+    <string name="settings_round_failed">Could not start the next round. Nothing was changed. Try again.</string>
+
+    <!--
+      The undo. Reached from the Completion Detail screen, and it is deliberately the only way to remove a
+      completion - there is no "clear history" anywhere.
+    -->
+    <string name="detail_action_undo">Undo completion</string>
+    <string name="detail_round_format">Round %1$d</string>
+
+    <string name="undo_confirm_title">Undo this completion?</string>
+    <string name="undo_confirm_message">The store goes back to pending, so you can complete it again. The history record for it is removed.</string>
+    <string name="undo_confirm_action">Undo</string>
+    <string name="undo_cancel">Cancel</string>
+
+    <string name="undo_result_done">Completion undone. The store is pending again.</string>
+    <string name="undo_result_already_gone">That completion is already gone.</string>
+    <string name="undo_result_store_missing">That store no longer exists.</string>
+    <string name="undo_result_failed">Could not undo the completion. Nothing was changed. Try again.</string>
+
+    <!--
+      The at-the-store shortcut. When the user is already inside the arrival radius, "Get directions" is
+      hidden and the completion action takes its place: directions to where you are standing are useless,
+      and the only thing left to do is confirm.
+    -->
+    <string name="store_action_complete">Store completed?</string>
+    <string name="store_at_location_note">You are inside the arrival radius of this store.</string>
+
+    <!--
+      ============================================================================
+      THE NEXT-STORE SUGGESTION - Version 7.1 to 7.4.
+
+      The wording is careful about what the app actually knows. "Nearest to you" and "picked without your
+      location" are different claims, and the card says which one it is making. The distance is a straight
+      line, not a drive - Version 8 changes the measurement, not this text.
+      ============================================================================
+    -->
+    <string name="suggestion_title">Next stop</string>
+
+    <!-- "%1$s away · %2$s" - the distance, then why this store was picked. -->
+    <string name="suggestion_detail_format">%1$s away · %2$s</string>
+
+    <!--
+      The reason, in the user's terms. Each one is a different claim about how the choice was made, which
+      is why they are not one string.
+    -->
+    <string name="suggestion_reason_nearest">nearest to you</string>
+    <string name="suggestion_reason_road_distance">closest to drive to</string>
+    <string name="suggestion_reason_home_aware">on your way home</string>
+    <string name="suggestion_reason_from_home">nearest to home</string>
+    <string name="suggestion_reason_no_reference">first in your list</string>
+    <string name="suggestion_reason_only_one">the only one left</string>
+
+    <!-- Used when there is no distance to report, so the detail line is just the reason. -->
+    <string name="suggestion_detail_reason_only_format">%1$s</string>
+
+    <string name="suggestion_straight_line_note">Straight-line distance, not a driving route.</string>
+
+    <string name="suggestion_action_navigate">Navigate</string>
+    <string name="suggestion_action_choose">Choose another</string>
+
+    <!-- The round is finished: a success, not an error. -->
+    <string name="suggestion_route_complete">Round complete — every store has been visited. Well done.</string>
+    <string name="suggestion_route_complete_home">Round complete. Head home — it is set as your finishing point.</string>
+    <string name="suggestion_route_complete_no_home">Round complete. Set a Home location in Settings to finish your route there.</string>
+    <string name="suggestion_route_complete_action_home">Go home</string>
+    <string name="suggestion_route_complete_action_next_round">Start next round</string>
+
+    <string name="suggestion_no_stores">No stores yet. Open the Map tab and long-press the map to add your first store.</string>
+
+    <!-- The manual override (7.3): the user picks the store instead of the strategy. -->
+    <string name="suggestion_choose_title">Choose a store</string>
+    <string name="suggestion_choose_action_use_strategy">Use the suggestion</string>
+    <string name="suggestion_choose_cancel">Cancel</string>
+    <string name="suggestion_choose_none_pending">Nothing left to visit in this round.</string>
+
+    <string name="suggestion_no_navigation_app">No navigation app found. Install Google Maps or Waze.</string>
+
+    <!--
+      ============================================================================
+      THE OPTIMISED ROUTE - Version 8.4.
+
+      The wording says "optimised", never "shortest possible". VROOM is a heuristic solver and the road
+      network it works over is the one openrouteservice knows; claiming more than that would be claiming
+      something the app cannot check.
+      ============================================================================
+    -->
+    <string name="route_title">Optimised route</string>
+
+    <!-- "12 stops · 34.2 km · about 1 h 15 min". The third part is dropped when no time is known. -->
+    <string name="route_summary_format">%1$d stops · %2$s · %3$s</string>
+    <!-- "12 stops · 34.2 km" - the form used by a route planned on the device, which has no drive time. -->
+    <string name="route_summary_format_no_time">%1$d stops · %2$s</string>
+
+    <!--
+      Shown under the totals when the distances are straight lines over the globe rather than roads. The
+      app never measured a road, so saying "34.2 km" without this would be claiming a precision it does
+      not have - and the real drive is always longer.
+    -->
+    <string name="route_estimate_note">Straight-line distances — the real drive is longer.</string>
+
+    <string name="route_endpoints_both">From your location, finishing at Home</string>
+    <string name="route_endpoints_home">Finishing at Home</string>
+    <string name="route_endpoints_location">From your location</string>
+    <string name="route_endpoints_neither">Order only — no start point or Home set</string>
+
+    <!-- "#1  1.1 km · about 4 min" -->
+    <string name="route_stop_sequence_format">#%1$d  %2$s</string>
+    <string name="route_stop_sequence_only">#%1$d</string>
+    <string name="route_stop_missing_store">Store %1$d — record missing</string>
+    <string name="route_stop_missing_store_snackbar">That store record is missing.</string>
+
+    <string name="route_action_start">Start Route</string>
+    <string name="route_action_recalculate">Recalculate</string>
+
+    <!-- ============================================================================
+      Saved route plans (Version 18)
+
+      The order the user decided, kept in the database. The screen shows which plan the order on screen
+      belongs to, and saving is a separate decision from choosing.
+      ============================================================================
+    -->
+    <!-- On the plan button when no plan has been saved for this round yet. -->
+    <string name="route_plan_none">No saved plan</string>
+    <!-- "Plan 1 (unsaved)" - the name is known but the order on screen has not been written yet. -->
+    <string name="route_plan_unsaved_format">%1$s (unsaved)</string>
+    <!-- On the plan button when the order on screen is a fresh suggestion with no name behind it. -->
+    <string name="route_plan_draft">Not saved yet</string>
+
+    <string name="route_plan_save">Save</string>
+    <string name="route_plan_reorder_hint">Press and hold a stop to move it up or down the route.</string>
+    <string name="route_stop_drag_handle">Move this stop</string>
+
+    <!-- The menu behind the plan button. The plan list is built at runtime above these. -->
+    <string name="route_plan_menu_title">Saved plans</string>
+    <string name="route_plan_menu_new">New plan</string>
+    <string name="route_plan_menu_rename">Rename…</string>
+    <string name="route_plan_menu_delete">Delete</string>
+
+    <string name="route_plan_rename_title">Plan name</string>
+    <string name="route_plan_rename_hint">Plan name</string>
+
+    <string name="route_plan_delete_title">Delete this plan?</string>
+    <string name="route_plan_delete_message">\"%1$s\" is removed. Your stores and completion history are not affected.</string>
+    <string name="route_plan_delete_confirm">Delete</string>
+    <string name="route_plan_cancel">Cancel</string>
+
+    <!-- Outcomes. Each names what actually happened rather than saying "done". -->
+    <string name="route_plan_saved_format">Saved as \"%1$s\".</string>
+    <string name="route_plan_updated">Plan updated.</string>
+    <string name="route_plan_deleted">Plan deleted.</string>
+    <string name="route_plan_save_failed">Could not save the plan. Your order is still on screen.</string>
+    <string name="route_plan_name_invalid">Give the plan a name of 40 characters or fewer.</string>
+    <string name="route_plan_gone">That plan is no longer there.</string>
+    <string name="route_plan_nothing_to_save">Nothing left to visit, so there is no order to save.</string>
+
+    <!-- Shown when the solver could not place every store. A route that quietly leaves shops out is worse. -->
+    <plurals name="route_unassigned">
+        <item quantity="one">%d store could not be included in the route.</item>
+        <item quantity="other">%d stores could not be included in the route.</item>
+    </plurals>
+
+    <!-- The states. Each names the user's actual next move rather than saying "failed". -->
+    <string name="route_no_stores_pending">Nothing left to visit in this round.</string>
+    <string name="route_empty_plan">The service returned no stops. Try Recalculate.</string>
+    <string name="route_not_configured">Routing is not set up. Add an API key to use this.</string>
+    <string name="route_too_many_stops">Too many stops for one request. The service accepts up to 50.</string>
+    <string name="route_offline">Could not reach the routing service. Check your connection and try again.</string>
+    <string name="route_quota">The daily routing allowance is used up. Try again tomorrow.</string>
+    <string name="route_failed">Could not build a route. Nothing was changed. Try again.</string>
+
+    <string name="title_optimized_route">Optimised route</string>
+
+    <string name="dashboard_action_plan_route">Plan the whole route</string>
+
+    <!--
+      ============================================================================
+      BACKUP AND RESTORE - Version 9.1 and 9.2.
+
+      Export is harmless. Import can replace every store, so its wording is deliberately blunt about what
+      each choice does - "merge" and "replace" are not self-explanatory, and the difference between them is
+      the difference between keeping your data and losing it.
+      ============================================================================
+    -->
+    <string name="settings_section_backup">Backup</string>
+    <string name="settings_backup_explanation">Save your stores, completions and settings to a file you choose, or restore from one. No API keys or passwords are ever included.</string>
+    <string name="settings_backup_export">Export</string>
+    <string name="settings_backup_import">Import</string>
+
+    <string name="settings_backup_export_done">Backup written. Keep the file somewhere safe.</string>
+    <string name="settings_backup_export_failed">Could not write the backup. Nothing was changed.</string>
+
+    <string name="settings_backup_import_unreadable">Could not read that file. Nothing was changed.</string>
+    <string name="settings_backup_import_failed">The restore failed and was rolled back. Your data is unchanged.</string>
+
+    <!-- "12 stores and 34 completions" -->
+    <string name="settings_backup_import_done">Restored: %1$d store(s) and %2$d completion(s). %3$d already existed and were kept.</string>
+
+    <plurals name="settings_backup_problems">
+        <item quantity="one">%d problem with this backup:</item>
+        <item quantity="other">%d problems with this backup:</item>
+    </plurals>
+
+    <string name="settings_backup_mode_title">Restore this backup?</string>
+    <string name="settings_backup_mode_message">It contains %1$s.\n\nMerge adds what is missing and keeps everything you have now. Replace deletes everything first.</string>
+    <string name="settings_backup_mode_merge">Merge</string>
+    <string name="settings_backup_mode_replace">Replace…</string>
+    <string name="settings_backup_mode_cancel">Cancel</string>
+
+    <string name="settings_backup_replace_title">Replace everything?</string>
+    <string name="settings_backup_replace_message">Every store and completion currently in the app will be deleted and replaced by the backup. Anything you have added since the backup was made will be lost. This cannot be undone.</string>
+    <string name="settings_backup_replace_confirm">Delete and restore</string>
+
+    <!--
+      ============================================================================
+      THE ROUND REPORT - Phase 12.
+
+      Answers what the History tab cannot: how a whole round went. The History tab shows one day; a round
+      is a pass over every store and may take several days, so "65 stores in 4 days - 23 on day 1, 18 on
+      day 2" is a question about the round and not about any single day.
+      ============================================================================
+    -->
+    <string name="title_round_report">Rounds</string>
+
+    <!-- The entry point in the History tab. -->
+    <string name="history_action_rounds">Round report</string>
+    <string name="history_rounds_hint">See how each round went — stores per day and how long it took.</string>
+
+    <string name="rounds_title_format">Round %1$d</string>
+
+    <!-- "65 stores · 4 days" - the headline. Both halves are pluralised. -->
+    <string name="rounds_summary_format">%1$s · %2$s</string>
+
+    <plurals name="rounds_stores">
+        <item quantity="one">%d store</item>
+        <item quantity="other">%d stores</item>
+    </plurals>
+
+    <plurals name="rounds_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+
+    <!-- "1 Sep 2026 – 4 Sep 2026" -->
+    <string name="rounds_range_format">%1$s – %2$s</string>
+
+    <!-- "Day 1 · 1 Sep — 23 stores". The year is on the range line, so it is not repeated here. -->
+    <string name="rounds_day_format">Day %1$d · %2$s — %3$s</string>
+
+    <!-- A store id with no matching row. Shown rather than dropped, so the list agrees with its own count. -->
+    <string name="rounds_unknown_store">#%1$d</string>
+
+    <string name="rounds_empty">No rounds yet. Complete a store and it will appear here.</string>
+
+    <!--
+      ============================================================================
+      ACCOUNT - Version 14.
+
+      The signed-out explanation is the important one: sign-in needs the app's SHA-1 registered in the
+      Firebase console, and until that is done the button cannot work. Saying so plainly beats a button
+      that fails with DEVELOPER_ERROR and no explanation.
+      ============================================================================
+    -->
+    <string name="settings_section_account">Account</string>
+
+    <!--
+      These two used to promise something that does not exist. The signed-out explanation said "Sign in to
+      sync your stores and history to your Google account", and the sign-out confirmation said "You will
+      stop syncing to your Google account" - but there is NO sync transport in the app. The only
+      SyncManager that exists is NoOpSyncManager, which logs and does nothing, and no Firestore code exists
+      anywhere in main/. Signing in authenticates and nothing else.
+
+      The words are the fix: an app must not claim a capability it does not have, and "where did my data
+      go?" is the wrong question to make a user ask about their own round.
+    -->
+    <string name="settings_account_signed_out_explanation">Signing in identifies you. Sync is not built yet, so your stores and history stay on this phone either way.</string>
+    <string name="settings_account_sign_in">Sign in with Google</string>
+    <string name="settings_account_sign_out">Sign out</string>
+
+    <!-- Shown when the web client id is missing from google-services.json. -->
+    <string name="settings_account_not_configured">Sign-in is not set up yet. Register this app\'s SHA-1 fingerprint in the Firebase console, enable Google as a sign-in provider, then download google-services.json again.</string>
+
+    <string name="settings_account_signed_out">Signed out. Your stores and history are still on this phone.</string>
+    <string name="settings_account_sign_out_confirm">You will be signed out. Your stores and completion history stay on this phone, and nothing is removed.</string>
+
+    <!-- ============================================================================
+      Cloud sync (Version 19) — MANUAL, BOTH WAYS.
+
+      Two buttons, and neither does anything until it is pressed. Not a "Sync" button: saving and
+      retrieving are different intentions, and one control would have to guess which was meant.
+
+      Retrieve is the destructive direction, so it always shows its numbers before it writes.
+      ============================================================================
+    -->
+    <string name="settings_section_cloud">Cloud</string>
+    <string name="settings_cloud_checking">Checking the cloud…</string>
+
+    <!--
+      ONE WORD EACH, and that is a layout constraint rather than a style choice.
+
+      The two buttons share the card's width in equal halves. "Save to cloud" and "Retrieve from cloud"
+      needed more than a half each on a 360dp screen, so the longer one was squeezed and the label broke
+      across two lines. The icon carries the word that was dropped: an arrow going up is a save, an arrow
+      coming down is a retrieve, and the card is already titled Cloud.
+    -->
+    <string name="settings_cloud_save">Save</string>
+    <string name="settings_cloud_retrieve">Retrieve</string>
+    <string name="settings_cloud_cancel">Cancel</string>
+    <string name="settings_cloud_ok">OK</string>
+
+    <!-- The status line: the honest answer to "did this really reach Firebase?" -->
+    <string name="settings_cloud_signed_out">Sign in above to save your data to the cloud.</string>
+    <string name="settings_cloud_nothing_there">Cloud: nothing saved yet.</string>
+    <!-- "Cloud: 12 store(s), 30 completion(s) — saved 27 Sep 2026 15:40" -->
+    <string name="settings_cloud_status_format">Cloud: %1$s — saved %2$s</string>
+    <string name="settings_cloud_counts_format">%1$d store(s), %2$d completion(s)</string>
+    <string name="settings_cloud_unreachable">Cloud: could not be reached. Check your connection.</string>
+    <string name="settings_cloud_unreadable">Cloud: something is saved there, but it is not a backup this app can read.</string>
+
+    <!-- Saving -->
+    <string name="settings_cloud_save_confirm_title">Replace the cloud copy?</string>
+    <string name="settings_cloud_save_confirm_message">The cloud currently holds %1$s, saved %2$s.\n\nSaving replaces it with what is on this phone. Nothing on this phone is changed.</string>
+    <string name="settings_cloud_save_confirm_action">Replace</string>
+    <string name="settings_cloud_saved_format">Saved to the cloud: %1$s.</string>
+    <string name="settings_cloud_save_empty">There is nothing to save yet. Add a store first.</string>
+    <string name="settings_cloud_save_failed">Could not save to the cloud. Nothing was changed.</string>
+    <string name="settings_cloud_signed_out_toast">Sign in first — there is nowhere to save to otherwise.</string>
+
+    <!-- Retrieving. The preview is a promise: these numbers are what the merge will actually do. -->
+    <string name="settings_cloud_preview_title">Retrieve from the cloud?</string>
+    <string name="settings_cloud_preview_message">The cloud holds %1$s, saved %2$s.\n\nMerging adds %3$s and keeps everything already on this phone.</string>
+    <string name="settings_cloud_preview_nothing_new">The cloud holds %1$s, saved %2$s.\n\nEverything in it is already on this phone, so nothing would change.</string>
+    <string name="settings_cloud_preview_extra_format">Adds %1$d store(s) and %2$d completion(s)</string>
+    <string name="settings_cloud_merge">Merge</string>
+    <string name="settings_cloud_replace">Replace…</string>
+    <string name="settings_cloud_replace_title">Replace everything?</string>
+    <string name="settings_cloud_replace_message">Every store and completion currently on this phone will be deleted and replaced by the cloud copy. Anything you have added since the cloud was saved will be lost. This cannot be undone.</string>
+    <string name="settings_cloud_replace_confirm">Delete and restore</string>
+    <string name="settings_cloud_retrieved_format">Retrieved: %1$d store(s) and %2$d completion(s) added, %3$d already here.</string>
+    <string name="settings_cloud_retrieve_nothing">The cloud has nothing to retrieve yet. Save to the cloud first.</string>
+    <string name="settings_cloud_retrieve_invalid">That cloud copy is not a backup this app can restore. Nothing was changed.</string>
+    <string name="settings_cloud_retrieve_failed">Could not read the cloud copy. Nothing was changed.</string>
+
+    <string name="settings_account_cancelled">Sign-in cancelled.</string>
+    <string name="settings_account_no_account">Sign-in was refused (%1$s). If you do have a Google account, send this text so it can be diagnosed.</string>
+    <string name="settings_account_sign_in_failed">Could not sign in (%1$s). Nothing was changed.</string>
+    <string name="settings_account_not_configured_toast">Sign-in is not set up yet.</string>
+
+    <!-- The sign-in gate, shown once on launch (Version 15). -->
+    <string name="sign_in_title">Alfamart Route Tracker</string>
+    <string name="sign_in_subtitle">Sign in to keep your stores and history on your Google account.</string>
+    <string name="sign_in_skip">Continue without an account</string>
+    <string name="sign_in_why">The app works fully without an account. Signing in only adds sync — your route stays on this phone either way.</string>
+</resources>

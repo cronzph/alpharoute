@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The launcher icon's foreground (Phase 10.3): a white map pin.
+
+  The same pin the splash screen shows, so the icon and the splash agree about what the app is - a thing
+  about places. This replaced the Android Studio template's Android robot, which said nothing about the
+  app at all.
+
+  Geometry, and why these numbers:
+    the canvas is 108dp and the launcher masks it to roughly the centre 66dp
+    the source pin is a 24-unit path, so scaling by 2.0 gives 48dp - comfortably inside the mask
+    translating by (108 - 48) / 2 = 30 centres it
+
+  White on the brand-blue background, which is also what the splash uses. The `monochrome` entry in
+  `mipmap-anydpi-v26/ic_launcher.xml` points at this same drawable, so Android 13's themed icons tint the
+  pin to the user's wallpaper colours - which only works because the artwork is a single solid shape.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:scaleX="2.0"
+        android:scaleY="2.0"
+        android:translateX="30"
+        android:translateY="30">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M12,2C8.13,2 5,5.13 5,9c0,5.25 7,13 7,13s7,-7.75 7,-13C19,5.13 15.87,2 12,2zM12,11.5c-1.38,0 -2.5,-1.12 -2.5,-2.5s1.12,-2.5 2.5,-2.5 2.5,1.12 2.5,2.5 -1.12,2.5 -2.5,2.5z" />
+    </group>
+</vector>

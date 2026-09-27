@@ -1,0 +1,585 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Settings (Phase 3.7). Screen 12 of the Phase 0.3 screen plan.
+
+  Grouped as Material cards rather than with the deprecated PreferenceFragment, so it matches the rest of
+  the UI and can be styled from the same theme.
+
+  Three groups, and each one is a setting that actually exists:
+
+    Home            - the permanent final destination. Never a store, never in a count.
+    Arrival radius  - how close you must be for the app to offer to complete a store.
+    About           - the app's name and version.
+
+  What is deliberately NOT here yet, and why: the screen plan also lists a store count and a completion
+  count. Those are statistics rather than settings, they need repository reads that nothing else uses, and
+  the Dashboard computes real figures properly in Phase 6.1 through TrackerCalculator. Adding a second,
+  simpler way to count the same rows here would be a second answer to a question that already has one.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="16dp"
+        android:paddingTop="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="16dp">
+
+        <!-- Home -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_home"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_home"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:id="@+id/tv_settings_home_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="14.599500, 120.984200" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/settings_home_caption"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_settings_home_action"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="@string/settings_action_set_home" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Arrival radius -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_radius"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_radius"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/til_settings_arrival_radius"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:hint="@string/settings_radius_hint">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_settings_arrival_radius"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:maxLines="1" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/settings_radius_caption"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_settings_radius_save"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:text="@string/settings_action_save_radius" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- About -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_about"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_about"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/app_name"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle" />
+
+                <TextView
+                    android:id="@+id/tv_settings_version"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                    tools:text="Version 1.0" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/app_tagline"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--
+          The round (Version 7).
+
+          Placed above the consistency check because it is an ordinary part of using the app, not a
+          maintenance tool. One round is one complete pass of every store; when the last store is confirmed,
+          the next pass begins here.
+        -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_round"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_round"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:id="@+id/tv_settings_round_current"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="Round 3 in progress" />
+
+                <TextView
+                    android:id="@+id/tv_settings_round_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    tools:text="12 of 20 stores visited" />
+
+                <TextView
+                    android:id="@+id/tv_settings_round_finished"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                    tools:text="2 rounds finished" />
+
+                <!--
+                  Disabled until the round is complete, with the caption below saying what is missing. A
+                  button that silently does nothing is worse than one that explains itself.
+                -->
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_settings_start_round"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/settings_round_action" />
+
+                <TextView
+                    android:id="@+id/tv_settings_round_note"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                    android:visibility="gone"
+                    tools:text="3 stores still to visit."
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--
+          The consistency check (Phase 6.5).
+
+          A maintenance tool rather than a setting, and it lives here because Settings is the screen for
+          "facts about the app's data". It reports and never repairs: a checker that fixes what it finds can
+          also destroy what it does not understand, and deleting an orphaned history row would erase the
+          only evidence that a completion happened.
+        -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_consistency"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_consistency"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/settings_consistency_explanation"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_settings_consistency_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    android:visibility="gone"
+                    tools:text="Everything agrees."
+                    tools:visibility="visible" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_settings_consistency_run"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/settings_consistency_action" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--
+          Backup and restore (Version 9).
+
+          Placed last, with About, because it is a thing you do rarely and deliberately. Export is harmless;
+          Import can replace every store, so it is visually secondary and always asks first.
+        -->
+        <!--
+          ==========================================================================
+          ACCOUNT (Version 14)
+
+          Placed first, above Backup, because it is the thing a new user has to decide about before the
+          rest means anything - and because the answer to "am I signed in?" should not be three screens
+          down.
+
+          THREE STATES, one card, and which one shows is decided by AuthRepository.observeUser():
+            signed out  - the Sign in button, or an explanation when sign-in is not set up yet
+            signed in   - the name, the email and Sign out
+          ==========================================================================
+        -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_account"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_account"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <!-- Signed in: the name, the email, and the way out. -->
+                <LinearLayout
+                    android:id="@+id/group_account_signed_in"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <TextView
+                        android:id="@+id/tv_account_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        tools:text="Juan Dela Cruz" />
+
+                    <TextView
+                        android:id="@+id/tv_account_email"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                        tools:text="juan@gmail.com" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_account_sign_out"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/settings_account_sign_out" />
+
+                </LinearLayout>
+
+                <!-- Signed out: sign in, or the reason it cannot be done yet. -->
+                <LinearLayout
+                    android:id="@+id/group_account_signed_out"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_account_explanation"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_account_signed_out_explanation"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_account_sign_in"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="@string/settings_account_sign_in" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--
+          ==========================================================================
+          Cloud (Version 19). MANUAL, BOTH WAYS.
+
+          Two buttons, and neither of them does anything until it is pressed. This is deliberately not a
+          "Sync" button: saving and retrieving are different intentions, and one control would have to
+          guess which was meant - and would guess wrong exactly when it mattered.
+
+          The status line is the honest answer to "did this really reach Firebase?". It says whether the
+          cloud holds anything, what it holds and when it was written, and it is the first thing in the
+          card because knowing where the data is matters more than the buttons.
+
+          Retrieve is the destructive direction, so it asks first and shows its numbers before it writes.
+          Both buttons are disabled until somebody is signed in - there is nowhere to put the data
+          otherwise, and the status line says so rather than leaving a dead button unexplained.
+          ==========================================================================
+        -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_cloud"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_cloud"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:id="@+id/tv_cloud_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/settings_cloud_checking"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    tools:text="Cloud: 12 stores, 30 completions — saved 2 days ago" />
+
+                <!--
+                  Two equal halves, and that is what stops the wrapping.
+
+                  The labels used to be "Save to cloud" and "Retrieve from cloud", sized to their content
+                  in a row that was gravity="end". On a 360dp screen the row has ~312dp to share, and the
+                  two labels plus their padding need more than that - so the longer one was squeezed and
+                  "Save to cloud" broke across two lines, which is what a button looks like when it is
+                  broken rather than when it is deliberate.
+
+                  Fixed three ways at once, because any one alone leaves the same failure reachable:
+                    layout_weight 1 on both, so neither can take more than its half;
+                    labels of one word each, so a half is enough;
+                    an icon on each, which carries the meaning the dropped words were carrying.
+                  maxLines=1 is the backstop - if a translation is longer, it ellipsises rather than
+                  silently growing a second line.
+                -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_cloud_retrieve"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:text="@string/settings_cloud_retrieve"
+                        app:icon="@drawable/ic_cloud_download" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_cloud_save"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:layout_weight="1"
+                        android:maxLines="1"
+                        android:text="@string/settings_cloud_save"
+                        app:icon="@drawable/ic_cloud_upload" />
+
+                </LinearLayout>
+
+                <com.google.android.material.progressindicator.LinearProgressIndicator
+                    android:id="@+id/cloud_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:indeterminate="true"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_settings_backup"
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/settings_section_backup"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/settings_backup_explanation"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+                <TextView
+                    android:id="@+id/tv_settings_backup_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    android:visibility="gone"
+                    tools:text="Exported 12 stores."
+                    tools:visibility="visible" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_settings_export"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/settings_backup_export" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btn_settings_import"
+                        style="@style/Widget.Material3.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/settings_backup_import" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

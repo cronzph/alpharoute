@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Navigation Active (Phase 4.3). Screen 8 of the Phase 0.3 screen plan.
+
+  A bottom sheet over the map, like the Route Preview, and for the same reason: the map stays visible
+  behind it, and while navigating the interesting thing is often the map underneath.
+
+  Four states, one layout, only one visible:
+
+    waiting  - "Waiting for your location…"; the distance is not shown, because it is not known
+    active   - the store, the straight-line distance and the arrival indicator
+    no fix   - "Location unavailable - arrival cannot be detected."
+    arrived  - the same block, with the indicator changed to the arrival message
+
+  NOT here, and deliberately: turn-by-turn guidance of any kind, an ETA, or a live traffic figure. Under
+  D-6/D-7 the Google Maps app does all of that. What this sheet is for is the one thing Google Maps does
+  not know about: whether the driver has crossed THIS app's arrival radius for THIS app's store, which is
+  the gate in front of the only action that changes a completion count.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_solid"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_nav_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/nav_sheet_title"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle" />
+
+        <TextView
+            android:id="@+id/tv_nav_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+            tools:text="Navigating to R-01 — 123456" />
+
+        <!--
+          The distance block. Hidden while no position is known: a distance needs a position, and showing
+          a placeholder or a zero would be inventing a number the app does not have.
+        -->
+        <LinearLayout
+            android:id="@+id/group_nav_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_sheet_label_remaining"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+            <TextView
+                android:id="@+id/tv_nav_distance"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle"
+                tools:text="1.7 km" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_sheet_distance_note"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+        </LinearLayout>
+
+        <!--
+          One line for the states with no distance: waiting, or no location at all.
+        -->
+        <TextView
+            android:id="@+id/tv_nav_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            android:visibility="gone"
+            tools:text="@string/nav_sheet_standby"
+            tools:visibility="visible" />
+
+        <!--
+          The arrival indicator. A chip rather than a line of text, because it is the one piece of state on
+          this screen that changes meaning as the drive progresses, and it is the state the whole phase
+          exists to produce.
+        -->
+        <TextView
+            android:id="@+id/tv_nav_arrival"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_store_status_chip"
+            android:paddingStart="12dp"
+            android:paddingTop="8dp"
+            android:paddingEnd="12dp"
+            android:paddingBottom="8dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            tools:text="@string/nav_sheet_outside" />
+
+        <TextView
+            android:id="@+id/tv_nav_guidance_note"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/nav_sheet_guidance_note"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption" />
+
+        <!--
+          The recovery action. ONE button whose meaning changes with the failure, because the two failures
+          need different things from the user and the sheet should only ever ask for one of them:
+
+            location lost  → "Grant permission", which opens the permission dialog
+            monitoring off → "Resume monitoring", which restarts the service
+
+          Hidden whenever the drive is healthy. A button that cannot do anything is not drawn - the same
+          rule the Route Preview follows for Retry and Start navigation.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_nav_recover"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:visibility="gone"
+            tools:text="@string/nav_monitoring_stopped_action"
+            tools:visibility="visible" />
+
+        <!--
+          The completion action. Offered for as long as there is a store being driven to, whatever the
+          arrival banner says.
+
+          It used to appear only once the arrival state was ARRIVED, so that a store outside the radius
+          offered no completion at all. That hid the button - sometimes for good - from exactly the drivers
+          who needed it: no fix under a roof, a signal that drops, or simply having driven on before
+          tapping. The arrival banner still says where the driver is, and the confirmation dialog behind
+          this button is still the one thing nothing is counted without.
+
+          It opens that dialog rather than completing anything itself. Keeping the tap and the write apart
+          is what makes the YES meaningful.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_nav_confirm"
+            style="@style/Widget.Material3.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/completion_action_confirm"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_nav_end"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_action_end" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_nav_open_maps"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/nav_action_open_maps" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

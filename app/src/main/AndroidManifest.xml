@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+      Phase 3.1 - the app's first permissions, and both are install-time, so the user is never prompted.
+
+      INTERNET              needed to download OpenStreetMap map tiles.
+      ACCESS_NETWORK_STATE  needed so the Map screen can tell the user "map tiles unavailable" instead of
+                            showing a blank grid and letting them guess. It does not read anything about
+                            the user; it only reports whether a network is available.
+
+      Location permissions are deliberately NOT here. They arrive in Phase 3.2, and only then.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!--
+      Phase 3.2 - location.
+
+      Both levels are declared, and both are RUNTIME permissions, so the user is prompted once.
+
+      Declaring both matters on Android 12 and later: the permission dialog offers the user
+      "Precise / Approximate", and if only ACCESS_FINE_LOCATION were declared, choosing "Approximate"
+      would leave the app with no location at all. With both declared, "Approximate" still yields a
+      usable - if coarser - position, and the map says so rather than leaving the user to wonder why the
+      blue dot drifts.
+
+      ACCESS_BACKGROUND_LOCATION is deliberately NOT declared. Nothing in this app needs the user's
+      position while they are not using it, and asking for it would be a privacy cost with no benefit.
+      Phase 4.3's arrival monitoring uses a FOREGROUND service instead, which is visible to the user by
+      design.
+    -->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!--
+      Phase 4.3 - arrival monitoring needs a foreground service, and a foreground service needs three
+      things declared and all three are load-bearing.
+
+      FOREGROUND_SERVICE          the base permission, required from Android 9 for any foreground service.
+      FOREGROUND_SERVICE_LOCATION required from Android 14 for a service whose type is "location".
+                                  Without it, startForeground() throws SecurityException - and the failure
+                                  arrives as a crash on the drive, not as a warning at build time.
+      POST_NOTIFICATIONS          a RUNTIME permission from Android 13. Denying it does NOT stop the
+                                  monitoring: it only means the arrival alert cannot be shown. An app that
+                                  gave up watching because it could not post a notification would be
+                                  silently broken, so the service treats a refusal as a degraded alert,
+                                  never as a reason to stop.
+
+      ACCESS_BACKGROUND_LOCATION is still deliberately NOT declared, and 4.3 does not change that. This
+      app never asks for the position while the user is unaware of it: the monitoring runs in a FOREGROUND
+      service with a visible, undismissable notification, which is the user's own evidence that it is
+      running. Asking for the background permission on top would be a real privacy cost with no benefit.
+    -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!--
+      Phase 4.3 - a reboot must clear a navigation session that did not survive it.
+
+      See NavigationBootReceiver for why this clears rather than resumes: Android 12+ forbids starting a
+      foreground service from a BOOT_COMPLETED receiver, so resuming would be illegal as well as unwise.
+    -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <!--
+      Phase 4.2 - package visibility, for the navigation hand-off.
+
+      Android 11 (API 30) stopped letting an app see what else is installed unless it says so. Without
+      this element, resolveActivity() returns null EVEN WHEN Google Maps is installed, so the hand-off
+      would silently do nothing - which is the single most common way this feature breaks, and it gives
+      no error to explain itself.
+
+      Only the two navigation apps are named. A broad <queries> element, or QUERY_ALL_PACKAGES, would be
+      a privacy cost with no benefit: these are the only packages this app ever looks for.
+    -->
+    <queries>
+        <package android:name="com.google.android.apps.maps" />
+        <package android:name="com.waze" />
+
+        <!--
+          Version 14 - Google Sign-In (Credential Manager).
+
+          credentials-play-services-auth resolves the Google account picker through Google Play
+          services. Without this package declared, Android 11+'s package-visibility rules make
+          com.google.android.gms invisible to this app's PackageManager, and the Credential Manager
+          call comes back as NoCredentialException - "no account on this device" - even on a device
+          that has one. This is what fixes that: it does not touch WHICH account is offered, only
+          whether the app is allowed to see that the provider exists at all.
+        -->
+        <package android:name="com.google.android.gms" />
+    </queries>
+
+    <!--
+      The application theme is the SPLASH theme, not the normal one.
+
+      That is deliberate: the system shows this window while the process starts, so the very first
+      frame is already the brand-blue launch screen instead of a blank window. MainActivity calls
+      SplashScreen.installSplashScreen(this), and the androidx library then swaps the activity over to
+      postSplashScreenTheme (@style/Theme.AlphaRoute) once it is ready.
+
+      No permissions are declared yet - each one is added in the phase that first needs it.
+    -->
+    <application
+        android:name=".AlphaRouteApp"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AlphaRoute.Splash">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!--
+          Phase 4.3 - the arrival monitor.
+
+          foregroundServiceType="location" is required, not decorative: from Android 14 the type declared
+          here must match the type passed to startForeground(), and either one missing throws
+          SecurityException at start.
+
+          exported="false" because nothing outside this app ever starts it. It is started by
+          NavigationSessionManager, from a tap on Start navigation.
+        -->
+        <service
+            android:name=".navigation.NavigationMonitorService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <!--
+          Phase 4.3 - clears a stale navigation session after a reboot.
+
+          exported="true" is required: the sender is the system, not this app. It is safe to export
+          precisely because the receiver does nothing but clear one column in this app's own settings row -
+          it reads no input, and there is nothing a hostile caller could make it do.
+        -->
+        <receiver
+            android:name=".navigation.NavigationBootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

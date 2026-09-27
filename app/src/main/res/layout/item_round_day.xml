@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  One day inside a round (Phase 12).
+
+  Two lines, and the second is hidden until the row is tapped:
+
+    Day 1 · 1 Sep        23 stores        <- always visible
+    R-01, R-02, R-05…                      <- the stores, revealed on tap
+
+  The store list starts hidden because a busy day is twenty-odd codes, and showing every round's every day
+  expanded would bury the summary the screen exists to give. Tapping is how the user asks for the detail.
+
+  The chevron is deliberately absent: this is a row inside a card, not a list item, and an icon per row
+  would add visual weight to something that is meant to read as a breakdown.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/tv_day_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+        tools:text="Day 1 · 1 Sep        23 stores" />
+
+    <TextView
+        android:id="@+id/tv_day_stores"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:lineSpacingExtra="2dp"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+        android:visibility="gone"
+        tools:text="R-01, R-02, R-05, R-07"
+        tools:visibility="visible" />
+
+</LinearLayout>

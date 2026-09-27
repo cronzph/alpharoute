@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Completion Detail - the full record of one completion (Phase 6.4). Screen 11b.
+
+  A scrolling detail list, a small map preview showing where the store is, and one action.
+
+  The map preview is deliberately NOT interactive: no zoom, no pan, no tap. It is there to say "here",
+  and the "View on Map" button is how the user actually goes there. A second map the user could get lost
+  in would be a worse version of the tab that already exists.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent"
+    android:fillViewport="true"
+    tools:context=".ui.history.CompletionDetailFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tv_detail_store"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle"
+            tools:text="R-01 — 123456" />
+
+        <TextView
+            android:id="@+id/tv_detail_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            tools:text="Alfamart Sampaloc" />
+
+        <TextView
+            android:id="@+id/tv_detail_area"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            tools:text="Sampaloc, Manila" />
+
+        <!--
+          The map preview. 180dp tall - enough to place the store in its surroundings, small enough that
+          the record below it is still visible without scrolling.
+        -->
+        <org.osmdroid.views.MapView
+            android:id="@+id/detail_map"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="16dp" />
+
+        <TextView
+            android:id="@+id/tv_detail_attribution"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+            tools:text="© OpenStreetMap contributors" />
+
+        <com.google.android.material.card.MaterialCardView
+            style="@style/Widget.AlphaRoute.StatCard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/detail_label_completion"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                <TextView
+                    android:id="@+id/tv_detail_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                    tools:text="25 Sep 2026" />
+
+                <TextView
+                    android:id="@+id/tv_detail_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    tools:text="10:12 AM" />
+
+                <TextView
+                    android:id="@+id/tv_detail_sequence"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                    tools:text="3rd store completed that day" />
+
+                <TextView
+                    android:id="@+id/tv_detail_coordinates"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                    tools:text="14.609100, 120.989600" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--
+          The one action. Primary, because it is the only thing to do on this screen.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_detail_view_on_map"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/detail_action_view_on_map" />
+
+        <!--
+          The undo (Version 7). A tonal button, not a primary one: it is destructive and it is not what the
+          screen is for, so it must not compete with View on Map.
+
+          It is the ONLY way to remove a completion anywhere in the app - there is no "clear history" - and
+          it always asks first.
+        -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_detail_undo"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@string/detail_action_undo" />
+
+        <!--
+          Shown instead of the button when the store row is missing. It names the consistency check rather
+          than offering a fix, because a missing store is a data problem this screen must not paper over.
+        -->
+        <TextView
+            android:id="@+id/tv_detail_missing"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="@string/detail_store_missing"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            android:textColor="?attr/colorError"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

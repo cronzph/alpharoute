@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Route Preview (Phase 4.2). Screen 7 of the Phase 0.3 screen plan.
+
+  A bottom sheet over the map: the map stays visible behind it, because the whole point of this screen is
+  the route LINE that the Map tab is drawing underneath. A full-screen preview would hide the thing it is
+  describing.
+
+  Four states, one layout, and only one of them is ever visible:
+
+    loading  - the progress bar and "Calculating route…". The polyline is deliberately NOT drawn yet.
+    ready    - the summary block, and Start navigation.
+    error    - the message, plus Retry where retrying could help.
+    no fix   - "Waiting for your location before routing." - it resolves itself when a fix arrives.
+
+  NOT here, and deliberately: any turn-by-turn guidance. Under D-7 the Google Maps app does the guiding,
+  the live traffic and the road rules. This screen shows what the drive looks like and then hands off.
+-->
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_sheet_solid"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="16dp">
+
+        <TextView
+            android:id="@+id/tv_route_preview_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/route_preview_title"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ScreenTitle" />
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/route_preview_loading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:indeterminate="true"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <!--
+          One line for every state that has no summary: "Calculating route…", the reason a request failed,
+          or "Waiting for your location before routing."
+        -->
+        <TextView
+            android:id="@+id/tv_route_preview_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+            tools:text="@string/route_preview_loading" />
+
+        <LinearLayout
+            android:id="@+id/group_route_preview_summary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/route_preview_label_store"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+            <TextView
+                android:id="@+id/tv_route_preview_store_code"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                tools:text="R-01 · 123456" />
+
+            <TextView
+                android:id="@+id/tv_route_preview_store_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.ListSubtitle"
+                tools:text="Alfamart Sample Street · Sample Barangay" />
+
+            <!--
+              Distance and duration side by side, because they are read together - "1.7 km, 5 min" is one
+              thought, and stacking them down the sheet would make it two.
+            -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/route_preview_label_distance"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_route_preview_distance"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        tools:text="1.7 km" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/route_preview_label_duration"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel" />
+
+                    <TextView
+                        android:id="@+id/tv_route_preview_duration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="@style/TextAppearance.AlphaRoute.ListTitle"
+                        tools:text="5 min" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- The attribution the routing service requires. Set in code from RoutingConfig. -->
+            <TextView
+                android:id="@+id/tv_route_preview_source"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textAppearance="@style/TextAppearance.AlphaRoute.Caption"
+                tools:text="Route from openrouteservice.org | OpenStreetMap contributors — it may differ from Google Maps." />
+
+        </LinearLayout>
+
+        <!--
+          At most two of these are ever visible. Retry appears only for the failures retrying could fix;
+          Start navigation only once a real route exists. A button that cannot do anything is not drawn.
+        -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="end"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_route_preview_retry"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/map_action_retry"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_route_preview_cancel"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/store_action_cancel" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_route_preview_start"
+                style="@style/Widget.Material3.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/route_preview_action_start"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

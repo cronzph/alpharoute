@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The inside of one StatCardView: a small label above a large value.
+
+  Both TextViews are marked not-important-for-accessibility on purpose. StatCardView sets a single
+  contentDescription on the card itself ("Completed today: 3"), so TalkBack reads one sentence per
+  card instead of two disconnected fragments.
+
+  No colours or sizes are hardcoded here - the two text roles from values/type.xml supply both, so
+  light and dark mode are handled automatically.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/tv_stat_label"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:importantForAccessibility="no"
+        android:maxLines="2"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.CardLabel"
+        tools:text="Completed today" />
+
+    <TextView
+        android:id="@+id/tv_stat_value"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:importantForAccessibility="no"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textAppearance="@style/TextAppearance.AlphaRoute.CardValue"
+        tools:text="3" />
+
+</LinearLayout>
